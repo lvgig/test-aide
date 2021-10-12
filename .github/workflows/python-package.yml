@@ -37,7 +37,7 @@ jobs:
     - name: Test with pytest
       if: always()
       run: |
-        pytest . --cov=test-aide/ --cov-report=html --cov-config=.coveragerc
+        pytest . --cov=test_aide/ --cov-report=html --cov-config=.coveragerc
 
     - name: Upload coverage pytest html test results to github
       if: always()
