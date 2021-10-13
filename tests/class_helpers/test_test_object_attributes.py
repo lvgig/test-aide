@@ -106,7 +106,7 @@ def test_getattr_calls():
 
 
 def test_n_assert_equal_dispatch_calls():
-    """Test the number of calls to test_aide.helpers.assert_equal_dispatch."""
+    """Test the number of calls to test_aide.class_helpers.assert_equal_dispatch."""
 
     x = DummyClass()
 

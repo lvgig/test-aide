@@ -6,7 +6,7 @@ import numpy as np
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.assert_np_nan_eqal_msg."""
+    """Test arguments for arguments of test_aide.class_helpers.assert_np_nan_eqal_msg."""
 
     expected_arguments = ["actual", "expected", "msg"]
 

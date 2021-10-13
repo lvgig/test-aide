@@ -5,7 +5,7 @@ from unittest import mock
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.assert_inheritance."""
+    """Test arguments for arguments of test_aide.class_helpers.assert_inheritance."""
 
     expected_arguments = ["obj", "cls"]
 
@@ -23,7 +23,7 @@ def test_arguments():
 
 
 def test_check_is_class_call():
-    """Test the call to test_aide.helpers.check_is_class."""
+    """Test the call to test_aide.class_helpers.check_is_class."""
 
     with mock.patch("test_aide.class_helpers.check_is_class") as mocked_method:
 

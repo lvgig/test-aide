@@ -9,7 +9,7 @@ from _pytest.mark.structures import ParameterSet
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.index_preserved_params."""
+    """Test arguments for arguments of test_aide.pandas_helpers.index_preserved_params."""
 
     expected_arguments = ["df_1", "df_2", "seed"]
 
