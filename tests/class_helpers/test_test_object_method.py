@@ -1,6 +1,6 @@
 import inspect
 import pytest
-import test_aide.helpers as h
+import test_aide.class_helpers as ch
 from unittest import mock
 
 
@@ -9,7 +9,7 @@ def test_arguments():
 
     expected_arguments = ["obj", "expected_method", "msg"]
 
-    arg_spec = inspect.getfullargspec(h.test_object_method)
+    arg_spec = inspect.getfullargspec(ch.test_object_method)
 
     arguments = arg_spec.args
 
@@ -38,7 +38,7 @@ def test_expected_method_not_str_error():
         match=f"expected_method should be a str but got {type(non_str_expected_method)}",
     ):
 
-        h.test_object_method(
+        ch.test_object_method(
             obj="a", expected_method=non_str_expected_method, msg="msg"
         )
 
@@ -47,10 +47,10 @@ def test_hasattr_call():
     """Test the call to hasattr."""
 
     with mock.patch(
-        target="test_aide.helpers.hasattr", return_value=True
+        target="test_aide.class_helpers.hasattr", return_value=True
     ) as mocked_method:
 
-        h.test_object_method(obj="s", expected_method="upper", msg="msg")
+        ch.test_object_method(obj="s", expected_method="upper", msg="msg")
 
         assert (
             mocked_method.call_count == 1
@@ -80,9 +80,9 @@ def test_hasattr_call():
 def test_callable_call():
     """Test the call to callable."""
 
-    with mock.patch(target="test_aide.helpers.callable") as mocked_method:
+    with mock.patch(target="test_aide.class_helpers.callable") as mocked_method:
 
-        h.test_object_method(obj="s", expected_method="upper", msg="msg")
+        ch.test_object_method(obj="s", expected_method="upper", msg="msg")
 
         assert (
             mocked_method.call_count == 1

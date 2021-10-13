@@ -3,7 +3,7 @@ import pandas
 import inspect
 import pytest
 
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 
 
 def test_arguments():
@@ -15,7 +15,7 @@ def test_arguments():
 
     expected_var_keyword_arg = "kwargs"
 
-    arg_spec = inspect.getfullargspec(h.assert_frame_equal_msg)
+    arg_spec = inspect.getfullargspec(eh.assert_index_equal_msg)
 
     arguments = arg_spec.args
 
@@ -24,7 +24,6 @@ def test_arguments():
     ), f"Incorrect number of arguments -\n  Expected: {len(expected_arguments)}\n  Actual: {len(arguments)}"
 
     for i, (e, a) in enumerate(zip(expected_arguments, arguments)):
-
         assert e == a, f"Incorrect arg at index {i} -\n  Expected: {e}\n  Actual: {a}"
 
     default_values = arg_spec.defaults
@@ -32,7 +31,6 @@ def test_arguments():
     if default_values is None:
 
         if expected_default_values is not None:
-
             raise AssertionError(
                 f"Incorrect default values -\n  Expected: {expected_default_values}\n  Actual: No default values"
             )
@@ -40,7 +38,6 @@ def test_arguments():
     else:
 
         if expected_default_values is None:
-
             raise AssertionError(
                 f"Incorrect default values -\n  Expected: No default values\n  Actual: {default_values}"
             )
@@ -52,7 +49,6 @@ def test_arguments():
         ), f"Incorrect number of default values -\n  Expected: {len(expected_default_values)}\n  Actual: {len(default_values)}"
 
         for i, (e, a) in enumerate(zip(expected_default_values, default_values)):
-
             assert (
                 e == a
             ), f"Incorrect default value at index {i} of default values -\n  Expected: {e}\n  Actual: {a}"
@@ -61,75 +57,71 @@ def test_arguments():
 
     assert (
         var_keyword_arg == expected_var_keyword_arg
-    ), f"Unexpected keyword arg variable in assert_frame_equal_msg -\n  Expected: {expected_var_keyword_arg}\n  Actual: {var_keyword_arg}"
+    ), f"Unexpected keyword arg variable in assert_index_equal_msg -\n  Expected: {expected_var_keyword_arg}\n  Actual: {var_keyword_arg}"
 
 
-def test_pandas_assert_frame_called(mocker):
-    """Test the call to pandas.testing.assert_frame_equal."""
+def test_pandas_assert_index_called(mocker):
+    """Test the call to pandas.testing.assert_index_equal."""
 
-    df = pd.DataFrame({"a": [1, 2, 3]})
-    df2 = pd.DataFrame({"a": [1, 2, 3]})
+    srs = pd.Index([1, 2, 3])
+    srs2 = pd.Index([1, 2, 3])
 
-    spy = mocker.spy(pandas.testing, "assert_frame_equal")
+    spy = mocker.spy(pandas.testing, "assert_index_equal")
 
-    h.assert_frame_equal_msg(expected=df, actual=df2, msg_tag="a", check_dtype=True)
+    eh.assert_index_equal_msg(expected=srs, actual=srs2, msg_tag="a", check_names=True)
 
     assert (
         spy.call_count == 1
-    ), f"Unexpected number of call to pd.testing.assert_frame_equal -\n  Expected: 1\n  Actual: {spy.call_count}"
+    ), f"Unexpected number of call to pd.testing.assert_index_equal_msg -\n  Expected: 1\n  Actual: {spy.call_count}"
 
     call_1_args = spy.call_args_list[0]
     call_1_pos_args = call_1_args[0]
     call_1_kwargs = call_1_args[1]
 
-    call_1_expected_kwargs = {"check_dtype": True}
-
-    call_1_expected_pos_args = (df, df2)
+    call_1_expected_kwargs = {"check_names": True}
+    call_1_expected_pos_args = (srs, srs2)
 
     assert len(call_1_expected_kwargs.keys()) == len(
         call_1_kwargs.keys()
     ), f"Unexpected number of kwargs -\n  Expected: {len(call_1_expected_kwargs.keys())}\n  Actual: {len(call_1_kwargs.keys())}"
 
     assert (
-        call_1_expected_kwargs["check_dtype"] == call_1_kwargs["check_dtype"]
-    ), f"""check_dtype kwarg unexpected -\n  Expected {call_1_expected_kwargs['check_dtype']}\n  Actual: {call_1_kwargs['check_dtype']}"""
+        call_1_expected_kwargs["check_names"] == call_1_kwargs["check_names"]
+    ), f"""check_names kwarg unexpected -\n  Expected {call_1_expected_kwargs['check_names']}\n  Actual: {call_1_kwargs['check_names']}"""
 
     assert len(call_1_expected_pos_args) == len(
         call_1_pos_args
     ), f"Unexpected number of kwargs -\n  Expected: {len(call_1_expected_pos_args)}\n  Actual: {len(call_1_pos_args)}"
 
-    pd.testing.assert_frame_equal(call_1_expected_pos_args[0], call_1_pos_args[0])
-
-    pd.testing.assert_frame_equal(call_1_expected_pos_args[1], call_1_pos_args[1])
+    pd.testing.assert_index_equal(call_1_expected_pos_args[0], call_1_pos_args[0])
+    pd.testing.assert_index_equal(call_1_expected_pos_args[1], call_1_pos_args[1])
 
 
 def test_exception_no_print():
-    """Test an assert error is raised (with correct info) in case of exception coming from assert_frame_equal and
+    """Test an assert error is raised (with correct info) in case of exception coming from assert_index_equal and
     print_actual_and_expected is False.
     """
 
-    df = pd.DataFrame({"a": [1, 2, 3]})
-    df2 = pd.DataFrame({"a": [1, 2, 4]})
+    srs = pd.Index([1, 2, 3])
+    srs2 = pd.Index([1, 2, 4])
 
     with pytest.raises(AssertionError, match="a"):
-
-        h.assert_frame_equal_msg(
-            expected=df, actual=df2, msg_tag="a", print_actual_and_expected=False
+        eh.assert_index_equal_msg(
+            expected=srs, actual=srs2, msg_tag="a", print_actual_and_expected=False
         )
 
 
 def test_exception_print():
-    """Test an assert error is raised (with correct info) in case of exception coming from assert_frame_equal and
+    """Test an assert error is raised (with correct info) in case of exception coming from assert_index_equal and
     print_actual_and_expected is True.
     """
 
-    df = pd.DataFrame({"a": [1, 2, 3]})
-    df2 = pd.DataFrame({"a": [1, 2, 4]})
+    srs = pd.Index([1, 2, 3])
+    srs2 = pd.Index([1, 2, 4])
 
-    with pytest.raises(
-        AssertionError, match=f"""{'a'}\nexpected:\n{df}\nactual:\n{df2}"""
-    ):
-
-        h.assert_frame_equal_msg(
-            expected=df, actual=df2, msg_tag="a", print_actual_and_expected=True
+    with pytest.raises(AssertionError) as exc_info:
+        eh.assert_index_equal_msg(
+            expected=srs, actual=srs2, msg_tag="a", print_actual_and_expected=True
         )
+
+    assert exc_info.value.args[0] == "a\n" + f"expected:\n{srs}\n" + f"actual:\n{srs2}"

@@ -1,6 +1,6 @@
 import pytest
 import inspect
-import test_aide.helpers as h
+import test_aide.pandas_helpers as ph
 import pandas as pd
 
 
@@ -9,7 +9,7 @@ def test_arguments():
 
     expected_arguments = ["df_1", "df_2"]
 
-    arg_spec = inspect.getfullargspec(h._check_dfs_passed)
+    arg_spec = inspect.getfullargspec(ph._check_dfs_passed)
 
     arguments = arg_spec.args
 
@@ -35,26 +35,26 @@ def test_exceptions_raised():
         TypeError, match=r"expecting first positional arg to be a pd.DataFrame.*"
     ):
 
-        h._check_dfs_passed(1, pd.DataFrame())
+        ph._check_dfs_passed(1, pd.DataFrame())
 
     with pytest.raises(
         TypeError, match=r"expecting second positional arg to be a pd.DataFrame.*"
     ):
 
-        h._check_dfs_passed(pd.DataFrame(), 1)
+        ph._check_dfs_passed(pd.DataFrame(), 1)
 
     with pytest.raises(
         ValueError,
         match=r"expecting first positional arg and second positional arg to have equal number of rows but got\n  1\n  0",
     ):
 
-        h._check_dfs_passed(pd.DataFrame({"a": 1}, index=[0]), pd.DataFrame())
+        ph._check_dfs_passed(pd.DataFrame({"a": 1}, index=[0]), pd.DataFrame())
 
     with pytest.raises(
         ValueError,
         match=r"expecting indexes for first positional arg and second positional arg to be the same but got\n  Int64Index\(\[0\], dtype='int64'\)\n  Int64Index\(\[1\], dtype='int64'\)",
     ):
 
-        h._check_dfs_passed(
+        ph._check_dfs_passed(
             pd.DataFrame({"a": 1}, index=[0]), pd.DataFrame({"a": 1}, index=[1])
         )

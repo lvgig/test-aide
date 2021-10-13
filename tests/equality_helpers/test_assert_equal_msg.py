@@ -1,14 +1,14 @@
 import pytest
 import inspect
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.testing.helpers.assert_equal_msg."""
+    """Test arguments for arguments of test_aide.testing.equality_helpers.assert_equal_msg."""
 
     expected_arguments = ["actual", "expected", "msg_tag"]
 
-    arg_spec = inspect.getfullargspec(h.assert_equal_msg)
+    arg_spec = inspect.getfullargspec(eh.assert_equal_msg)
 
     arguments = arg_spec.args
 
@@ -38,4 +38,4 @@ def test_error_raised_unequal():
         AssertionError, match=f"{msg_tag} -\n  Expected: {expected}\n  Actual: {actual}"
     ):
 
-        h.assert_equal_msg(expected=expected, actual=actual, msg_tag=msg_tag)
+        eh.assert_equal_msg(expected=expected, actual=actual, msg_tag=msg_tag)

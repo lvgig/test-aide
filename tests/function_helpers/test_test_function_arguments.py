@@ -1,18 +1,20 @@
 import inspect
 import pytest
-import test_aide.helpers as h
+import test_aide.function_helpers as fh
+import test_aide.class_helpers as ch
+import test_aide.equality_helpers as eh
 import pandas as pd
 from unittest import mock
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.test_function_arguments."""
+    """Test arguments for arguments of test_aide.function_helpers.test_function_arguments."""
 
     expected_arguments = ["func", "expected_arguments", "expected_default_values"]
 
     expected_default_values = (None,)
 
-    arg_spec = inspect.getfullargspec(h.test_function_arguments)
+    arg_spec = inspect.getfullargspec(fh.test_function_arguments)
 
     arguments = arg_spec.args
 
@@ -60,7 +62,7 @@ def test_expected_arguments_not_list_error():
 
     with pytest.raises(TypeError):
 
-        h.test_function_arguments(h.check_is_class, expected_arguments=1)
+        fh.test_function_arguments(ch.check_is_class, expected_arguments=1)
 
 
 def test_expected_default_values_not_tuple_error():
@@ -68,8 +70,8 @@ def test_expected_default_values_not_tuple_error():
 
     with pytest.raises(TypeError):
 
-        h.test_function_arguments(
-            h.check_is_class,
+        fh.test_function_arguments(
+            ch.check_is_class,
             expected_arguments=["class_to_check"],
             expected_default_values={},
         )
@@ -80,11 +82,11 @@ def test_getfullargspec_call_count():
 
     with mock.patch(
         target="inspect.getfullargspec",
-        return_value=inspect.getfullargspec(h.check_is_class),
+        return_value=inspect.getfullargspec(ch.check_is_class),
     ) as mocked_method:
 
-        h.test_function_arguments(
-            h.check_is_class, expected_arguments=["class_to_check"]
+        fh.test_function_arguments(
+            ch.check_is_class, expected_arguments=["class_to_check"]
         )
 
         assert (
@@ -102,8 +104,8 @@ def test_different_number_arguments_error():
         match=f"Incorrect number of arguments -\n  Expected: {len(incorrect_expected_args)}\n  Actual: 4",
     ):
 
-        h.test_function_arguments(
-            h.assert_frame_equal_msg,
+        fh.test_function_arguments(
+            eh.assert_frame_equal_msg,
             expected_arguments=incorrect_expected_args,
             expected_default_values=(False,),
         )
@@ -112,17 +114,19 @@ def test_different_number_arguments_error():
 def test_assert_equal_msg_calls_for_positional_arguments():
     """Test the calls to assert_equal_msg for the positional arguments."""
 
-    with mock.patch(target="test_aide.helpers.assert_equal_msg") as mocked_method:
+    with mock.patch(
+        target="test_aide.function_helpers.assert_equal_msg"
+    ) as mocked_method:
 
         expected_args = ["obj", "expected_method", "msg"]
 
-        h.test_function_arguments(
-            h.test_object_method, expected_arguments=expected_args
+        fh.test_function_arguments(
+            ch.test_object_method, expected_arguments=expected_args
         )
 
         assert mocked_method.call_count == len(
             expected_args
-        ), f"Unexpected number of calls to test_aide.helpers.assert_equal_msg -\n  Expected: {len(expected_args)}\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpected number of calls to test_aide.function_helpers.assert_equal_msg -\n  Expected: {len(expected_args)}\n  Actual: {mocked_method.call_count}"
 
         for call_n in range(mocked_method.call_count):
 
@@ -138,7 +142,7 @@ def test_assert_equal_msg_calls_for_positional_arguments():
 
             assert len(call_n_pos_args) == len(
                 call_n_expected_pos_arg
-            ), f"Unexpected number of positional args in call {call_n} to test_aide.helpers.assert_equal_msg -\n  Expected: {len(call_n_expected_pos_arg)}\n  Actual:  {len(call_n_pos_args)}"
+            ), f"Unexpected number of positional args in call {call_n} to test_aide.function_helpers.assert_equal_msg -\n  Expected: {len(call_n_expected_pos_arg)}\n  Actual:  {len(call_n_pos_args)}"
 
             for i, (e, a) in enumerate(zip(call_n_expected_pos_arg, call_n_pos_args)):
 
@@ -148,7 +152,7 @@ def test_assert_equal_msg_calls_for_positional_arguments():
 
             assert (
                 call_n_kwargs == {}
-            ), f"Unexpected keyword args in call {call_n} to test_aide.helpers.assert_equal_msg -\n  Expected: None\n  Actual:  {call_n_kwargs}"
+            ), f"Unexpected keyword args in call {call_n} to test_aide.function_helpers.assert_equal_msg -\n  Expected: None\n  Actual:  {call_n_kwargs}"
 
 
 def test_default_values_non_mismatch_1_error():
@@ -163,8 +167,8 @@ def test_default_values_non_mismatch_1_error():
         match=r"Incorrect default values -\n  Expected: .*\n  Actual: No default values",
     ):
 
-        h.test_function_arguments(
-            h.assert_inheritance,
+        fh.test_function_arguments(
+            ch.assert_inheritance,
             expected_arguments=["obj", "cls"],
             expected_default_values=incorrect_defualt_value,
         )
@@ -182,8 +186,8 @@ def test_default_values_non_mismatch_2_error():
         match="Incorrect default values -\n  Expected: No default values\n  Actual: .*",
     ):
 
-        h.test_function_arguments(
-            h.assert_frame_equal_msg,
+        fh.test_function_arguments(
+            eh.assert_frame_equal_msg,
             expected_arguments=[
                 "actual",
                 "expected",
@@ -204,8 +208,8 @@ def test_different_number_default_values_error():
         match=f"Incorrect number of default values -\n  Expected: {len(incorrect_defualt_value)}\n  Actual: 1",
     ):
 
-        h.test_function_arguments(
-            h.assert_frame_equal_msg,
+        fh.test_function_arguments(
+            eh.assert_frame_equal_msg,
             expected_arguments=[
                 "actual",
                 "expected",
@@ -219,12 +223,14 @@ def test_different_number_default_values_error():
 def test_assert_equal_msg_calls_for_default_values():
     """Test the calls to assert_equal_msg for the keyword arguments."""
 
-    with mock.patch(target="test_aide.helpers.assert_equal_msg") as mocked_method:
+    with mock.patch(
+        target="test_aide.function_helpers.assert_equal_msg"
+    ) as mocked_method:
 
         expected_args = ["self", "data", "index", "columns", "dtype", "copy"]
         expected_default_values = (None, None, None, None, False)
 
-        h.test_function_arguments(
+        fh.test_function_arguments(
             pd.DataFrame,
             expected_arguments=expected_args,
             expected_default_values=expected_default_values,
@@ -232,7 +238,7 @@ def test_assert_equal_msg_calls_for_default_values():
 
         assert mocked_method.call_count == (
             len(expected_args) + len(expected_default_values)
-        ), f"Unexpected number of calls to test_aide.helpers.assert_equal_msg -\n  Expected: {len(expected_args) + len(expected_default_values)}\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpected number of calls to test_aide.function_helpers.assert_equal_msg -\n  Expected: {len(expected_args) + len(expected_default_values)}\n  Actual: {mocked_method.call_count}"
 
         for call_n in range(len(expected_args), mocked_method.call_count):
 
@@ -248,7 +254,7 @@ def test_assert_equal_msg_calls_for_default_values():
 
             assert len(call_n_pos_args) == len(
                 call_n_expected_pos_arg
-            ), f"Unexpected number of positional args in call {call_n} to test_aide.helpers.assert_equal_msg -\n  Expected: {len(call_n_expected_pos_arg)}\n  Actual:  {len(call_n_pos_args)}"
+            ), f"Unexpected number of positional args in call {call_n} to test_aide.function_helpers.assert_equal_msg -\n  Expected: {len(call_n_expected_pos_arg)}\n  Actual:  {len(call_n_pos_args)}"
 
             for i, (e, a) in enumerate(zip(call_n_expected_pos_arg, call_n_pos_args)):
 
@@ -258,4 +264,4 @@ def test_assert_equal_msg_calls_for_default_values():
 
             assert (
                 call_n_kwargs == {}
-            ), f"Unexpected keyword args in call {call_n} to test_aide.helpers.assert_equal_msg -\n  Expected: None\n  Actual:  {call_n_kwargs}"
+            ), f"Unexpected keyword args in call {call_n} to test_aide.function_helpers.assert_equal_msg -\n  Expected: None\n  Actual:  {call_n_kwargs}"

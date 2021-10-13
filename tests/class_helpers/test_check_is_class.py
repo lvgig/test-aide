@@ -1,5 +1,6 @@
 import pytest
-import test_aide.helpers as h
+import test_aide.class_helpers as ch
+import test_aide.equality_helpers as eh
 from unittest import mock
 
 
@@ -8,7 +9,7 @@ def test_inpsect_is_class_call():
 
     with mock.patch("inspect.isclass") as mocked_method:
 
-        h.check_is_class(int)
+        ch.check_is_class(int)
 
         assert (
             mocked_method.call_count == 1
@@ -18,7 +19,7 @@ def test_inpsect_is_class_call():
         call_1_pos_args = call_1_args[0]
         call_1_kwargs = call_1_args[1]
 
-        h.assert_dict_equal_msg(
+        eh.assert_dict_equal_msg(
             actual=call_1_kwargs,
             expected={},
             msg_tag="Keyword arg assert for inspect.isclass",
@@ -38,4 +39,4 @@ def test_non_class_error():
 
     with pytest.raises(TypeError):
 
-        h.check_is_class(1)
+        ch.check_is_class(1)

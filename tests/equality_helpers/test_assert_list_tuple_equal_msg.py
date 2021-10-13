@@ -1,15 +1,15 @@
 import pytest
 import inspect
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 from unittest import mock
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.assert_list_tuple_equal_msg."""
+    """Test arguments for arguments of test_aide.equality_helpers.assert_list_tuple_equal_msg."""
 
     expected_arguments = ["actual", "expected", "msg_tag"]
 
-    arg_spec = inspect.getfullargspec(h.assert_list_tuple_equal_msg)
+    arg_spec = inspect.getfullargspec(eh.assert_list_tuple_equal_msg)
 
     arguments = arg_spec.args
 
@@ -35,7 +35,7 @@ def test_expected_not_list_tuple_error():
         TypeError, match=f"expected should be of type list or tuple, but got {type(1)}"
     ):
 
-        h.assert_list_tuple_equal_msg(expected=1, actual=[], msg_tag="test_msg")
+        eh.assert_list_tuple_equal_msg(expected=1, actual=[], msg_tag="test_msg")
 
 
 def test_actual_not_list_tuple_error():
@@ -45,7 +45,7 @@ def test_actual_not_list_tuple_error():
         TypeError, match=f"actual should be of type list or tuple, but got {type(1)}"
     ):
 
-        h.assert_list_tuple_equal_msg(expected=(), actual=1, msg_tag="test_msg")
+        eh.assert_list_tuple_equal_msg(expected=(), actual=1, msg_tag="test_msg")
 
 
 def test_expected_actual_not_same_types_error():
@@ -53,7 +53,7 @@ def test_expected_actual_not_same_types_error():
 
     with pytest.raises(TypeError, match="type mismatch"):
 
-        h.assert_list_tuple_equal_msg(expected=(), actual=[], msg_tag="test_msg")
+        eh.assert_list_tuple_equal_msg(expected=(), actual=[], msg_tag="test_msg")
 
 
 def test_different_lengths_error():
@@ -67,27 +67,29 @@ def test_different_lengths_error():
         match=f"Unequal lengths -\n  Expected: {len(expected_value)}\n  Actual: {len(actual_value)}",
     ):
 
-        h.assert_list_tuple_equal_msg(
+        eh.assert_list_tuple_equal_msg(
             expected=expected_value, actual=actual_value, msg_tag="test_msg"
         )
 
 
 def test_assert_equal_dispatch_calls():
-    """Test the calls to test_aide.helpers.assert_equal_dispatch."""
+    """Test the calls to test_aide.equality_helpers.assert_equal_dispatch."""
 
     expected_value = [1, 2, 3]
     actual_value = [1, 2, 3]
     msg_tag_value = "test_msg"
 
-    with mock.patch(target="test_aide.helpers.assert_equal_dispatch") as mocked_method:
+    with mock.patch(
+        target="test_aide.equality_helpers.assert_equal_dispatch"
+    ) as mocked_method:
 
-        h.assert_list_tuple_equal_msg(
+        eh.assert_list_tuple_equal_msg(
             expected=expected_value, actual=actual_value, msg_tag=msg_tag_value
         )
 
         assert mocked_method.call_count == len(
             expected_value
-        ), f"Unexpeted number of calls to test_aide.helpers.assert_equal_dispatch -\n  Expected: {len(expected_value)}\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpeted number of calls to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: {len(expected_value)}\n  Actual: {mocked_method.call_count}"
 
         for i, (e, a) in enumerate(zip(expected_value, actual_value)):
 
@@ -99,14 +101,14 @@ def test_assert_equal_dispatch_calls():
 
             assert (
                 call_n_kwargs == {}
-            ), f"Unexpected call keyword args in call {i} to test_aide.helpers.assert_equal_dispatch -\n  Expected: None\n  Actual: {call_n_kwargs}"
+            ), f"Unexpected call keyword args in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: None\n  Actual: {call_n_kwargs}"
 
             assert len(call_n_pos_args) == len(
                 expected_pos_args
-            ), f"Difference in number of positional arguments in call {i} to test_aide.helpers.assert_equal_dispatch -\n  Expected: {len(expected_pos_args)}\n  Actual: {len(call_n_pos_args)}"
+            ), f"Difference in number of positional arguments in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: {len(expected_pos_args)}\n  Actual: {len(call_n_pos_args)}"
 
             for j, (e, a) in enumerate(zip(call_n_pos_args, expected_pos_args)):
 
                 assert (
                     e == a
-                ), f"Difference in positional args at index {j} in call {i} to test_aide.helpers.assert_equal_dispatch -\n Expected: {e}\n  Actual: {a}"
+                ), f"Difference in positional args at index {j} in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n Expected: {e}\n  Actual: {a}"

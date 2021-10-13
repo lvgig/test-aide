@@ -1,18 +1,18 @@
 import inspect
 import test_aide
-import test_aide.helpers as h
+import test_aide.pandas_helpers as ph
+import test_aide.equality_helpers as eh
 import pandas as pd
-import numpy as np
 from unittest import mock
 from _pytest.mark.structures import ParameterSet
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.index_preserved_params."""
+    """Test arguments for arguments of test_aide.helpers.row_by_row_params."""
 
-    expected_arguments = ["df_1", "df_2", "seed"]
+    expected_arguments = ["df_1", "df_2"]
 
-    arg_spec = inspect.getfullargspec(h.index_preserved_params)
+    arg_spec = inspect.getfullargspec(ph.row_by_row_params)
 
     arguments = arg_spec.args
 
@@ -26,9 +26,9 @@ def test_arguments():
 
     default_values = arg_spec.defaults
 
-    assert default_values == (
-        0,
-    ), f"Unexpected default values -\n  Expected: {(0, )}\n  Actual: {default_values}"
+    assert (
+        default_values is None
+    ), f"Unexpected default values -\n  Expected: {None}\n  Actual: {default_values}"
 
 
 def test__check_dfs_passed_call():
@@ -37,9 +37,9 @@ def test__check_dfs_passed_call():
     df1 = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]}, index=[7, 8, 9])
     df2 = pd.DataFrame({"a": [2, 3, 4], "b": [5, 6, 7]}, index=[7, 8, 9])
 
-    with mock.patch.object(test_aide.helpers, "_check_dfs_passed") as mocked:
+    with mock.patch.object(test_aide.pandas_helpers, "_check_dfs_passed") as mocked:
 
-        h.index_preserved_params(df1, df2, seed=1)
+        ph.row_by_row_params(df1, df2)
 
     assert mocked.call_count == 1, "unexpected number of calls to _check_dfs_passed"
 
@@ -67,60 +67,18 @@ def test_returned_object():
     df1 = pd.concat([df1_1, df1_2, df1_3], axis=0)
     df2 = pd.concat([df2_1, df2_2, df2_3], axis=0)
 
-    seed_value = 111
+    expected_df_pairs = [(df1_1, df2_1), (df1_2, df2_2), (df1_3, df2_3), (df1, df2)]
 
-    np.random.seed(seed_value)
-    random_index = np.random.randint(low=-99999999, high=100000000, size=df1.shape[0])
-    start_decreasing_index = np.random.randint(low=-99999999, high=100000000, size=1)[0]
-    decreasing_index = range(
-        start_decreasing_index, start_decreasing_index - df1.shape[0], -1
-    )
-    start_increasing_index = np.random.randint(low=-99999999, high=100000000, size=1)[0]
-    increasing_index = range(
-        start_increasing_index, start_increasing_index + df1.shape[0], 1
-    )
+    expected_ids = ["index 7", "index 8", "index 9", "all rows (3)"]
 
-    df1_copy = df1.copy()
-    df2_copy = df2.copy()
-
-    df1_copy.index = random_index
-    df2_copy.index = random_index
-
-    expected_df_pairs = [(df1_copy, df2_copy)]
-
-    df1_copy = df1.copy()
-    df2_copy = df2.copy()
-
-    df1_copy.index = decreasing_index
-    df2_copy.index = decreasing_index
-
-    expected_df_pairs.append((df1_copy, df2_copy))
-
-    df1_copy = df1.copy()
-    df2_copy = df2.copy()
-
-    df1_copy.index = increasing_index
-    df2_copy.index = increasing_index
-
-    expected_df_pairs.append((df1_copy, df2_copy))
-
-    expected_df_pairs.append((df1, df2))
-
-    expected_ids = [
-        "random index",
-        "decreasing index",
-        "increasing index",
-        "original index",
-    ]
-
-    results = h.index_preserved_params(df1, df2, seed=seed_value)
+    results = ph.row_by_row_params(df1, df2)
 
     assert (
         type(results) is list
-    ), "unexpected type for object returned from index_preserved_params"
+    ), "unexpected type for object returned from row_by_row_params"
     assert len(results) == len(
         expected_df_pairs
-    ), "unexpected len of object returned from index_preserved_params"
+    ), "unexpected len of object returned from row_by_row_params"
 
     for i in range(len(expected_df_pairs)):
 
@@ -128,9 +86,9 @@ def test_returned_object():
             type(results[i]) is ParameterSet
         ), f"unexpected type for {i}th item in returned list"
 
-        h.assert_equal_dispatch(
-            expected_df_pairs[i],
+        eh.assert_equal_dispatch(
             results[i].values,
+            expected_df_pairs[i],
             f"unexpected values for {i}th item in returned list",
         )
 

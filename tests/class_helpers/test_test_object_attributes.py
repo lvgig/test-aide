@@ -1,6 +1,6 @@
 import inspect
 import pytest
-import test_aide.helpers as h
+import test_aide.class_helpers as ch
 from unittest import mock
 
 
@@ -14,11 +14,11 @@ class DummyClass:
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.test_object_attributes."""
+    """Test arguments for arguments of test_aide.class_helpers.test_object_attributes."""
 
     expected_arguments = ["obj", "expected_attributes", "msg"]
 
-    arg_spec = inspect.getfullargspec(h.test_object_attributes)
+    arg_spec = inspect.getfullargspec(ch.test_object_attributes)
 
     arguments = arg_spec.args
 
@@ -44,13 +44,13 @@ def test_n_getattr_calls():
 
     expected_attributes = {"a": 1, "b": 2, "c": 3}
 
-    with mock.patch(target="test_aide.helpers.getattr") as mocked_method:
+    with mock.patch(target="test_aide.class_helpers.getattr") as mocked_method:
 
         # mock assert_equal_dispatch (called by test_object_attributes) so it does not error from
         # getattr not returning the right things - as it is mocked
-        with mock.patch(target="test_aide.helpers.assert_equal_dispatch"):
+        with mock.patch(target="test_aide.class_helpers.assert_equal_dispatch"):
 
-            h.test_object_attributes(
+            ch.test_object_attributes(
                 obj=x, expected_attributes=expected_attributes, msg="msg"
             )
 
@@ -68,13 +68,13 @@ def test_getattr_calls():
 
     call_n = 0
 
-    with mock.patch(target="test_aide.helpers.getattr") as mocked_method:
+    with mock.patch(target="test_aide.class_helpers.getattr") as mocked_method:
 
         # again mock assert_equal_dispatch (called by test_object_attributes) so it does not error from
         # getattr not returning the right things - as it is mocked
-        with mock.patch(target="test_aide.helpers.assert_equal_dispatch"):
+        with mock.patch(target="test_aide.class_helpers.assert_equal_dispatch"):
 
-            h.test_object_attributes(
+            ch.test_object_attributes(
                 obj=x, expected_attributes=expected_attributes, msg="msg"
             )
 
@@ -112,9 +112,11 @@ def test_n_assert_equal_dispatch_calls():
 
     expected_attributes = {"a": 1, "b": 2, "c": 3}
 
-    with mock.patch(target="test_aide.helpers.assert_equal_dispatch") as mocked_method:
+    with mock.patch(
+        target="test_aide.class_helpers.assert_equal_dispatch"
+    ) as mocked_method:
 
-        h.test_object_attributes(
+        ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="msg"
         )
 
@@ -132,9 +134,11 @@ def test_assert_equal_dispatch_calls():
 
     call_n = 0
 
-    with mock.patch(target="test_aide.helpers.assert_equal_dispatch") as mocked_method:
+    with mock.patch(
+        target="test_aide.class_helpers.assert_equal_dispatch"
+    ) as mocked_method:
 
-        h.test_object_attributes(
+        ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="test_msg"
         )
 
@@ -189,7 +193,7 @@ def test_expected_attributes_non_dict_error():
 
     with pytest.raises(TypeError):
 
-        h.test_object_attributes(obj=x, expected_attributes=(1, 2), msg="test_msg")
+        ch.test_object_attributes(obj=x, expected_attributes=(1, 2), msg="test_msg")
 
 
 def test_expected_attribute_missing_error():
@@ -201,7 +205,7 @@ def test_expected_attribute_missing_error():
 
     with pytest.raises(AssertionError, match="obj has not attribute d"):
 
-        h.test_object_attributes(
+        ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="test_msg"
         )
 
@@ -215,6 +219,6 @@ def test_expected_attribute_wrong_error():
 
     with pytest.raises(AssertionError, match=f"""{'c'} {'test_msg'}"""):
 
-        h.test_object_attributes(
+        ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="test_msg"
         )

@@ -3,7 +3,7 @@ import pandas
 import inspect
 import pytest
 
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 
 
 def test_arguments():
@@ -15,7 +15,7 @@ def test_arguments():
 
     expected_var_keyword_arg = "kwargs"
 
-    arg_spec = inspect.getfullargspec(h.assert_series_equal_msg)
+    arg_spec = inspect.getfullargspec(eh.assert_series_equal_msg)
 
     arguments = arg_spec.args
 
@@ -68,7 +68,7 @@ def test_pandas_assert_series_called(mocker):
 
     spy = mocker.spy(pandas.testing, "assert_series_equal")
 
-    h.assert_series_equal_msg(expected=srs, actual=srs2, msg_tag="a", check_dtype=True)
+    eh.assert_series_equal_msg(expected=srs, actual=srs2, msg_tag="a", check_dtype=True)
 
     assert (
         spy.call_count == 1
@@ -106,7 +106,7 @@ def test_exception_no_print():
     srs2 = pd.Series({"a": [1, 2, 4]})
 
     with pytest.raises(AssertionError, match="a"):
-        h.assert_series_equal_msg(
+        eh.assert_series_equal_msg(
             expected=srs, actual=srs2, msg_tag="a", print_actual_and_expected=False
         )
 
@@ -120,7 +120,7 @@ def test_exception_print():
     srs2 = pd.Series({"a": [1, 2, 4]})
 
     with pytest.raises(AssertionError) as exc_info:
-        h.assert_series_equal_msg(
+        eh.assert_series_equal_msg(
             expected=srs, actual=srs2, msg_tag="a", print_actual_and_expected=True
         )
 

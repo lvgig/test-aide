@@ -1,30 +1,30 @@
 import inspect
 import pytest
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 from tubular.base import ReturnKeyDict
 import pandas as pd
 import numpy as np
 from unittest.mock import _get_target
 
 
-# potential functions that test_aide.helpers.assert_equal_dispatch can call
+# potential functions that test_aide.equality_helpers.assert_equal_dispatch can call
 potential_assert_functions = [
-    "test_aide.helpers.assert_frame_equal_msg",
-    "test_aide.helpers.assert_series_equal_msg",
-    "test_aide.helpers.assert_index_equal_msg",
-    "test_aide.helpers.assert_list_tuple_equal_msg",
-    "test_aide.helpers.assert_dict_equal_msg",
-    "test_aide.helpers.assert_equal_msg",
-    "test_aide.helpers.assert_np_nan_eqal_msg",
+    "test_aide.equality_helpers.assert_frame_equal_msg",
+    "test_aide.equality_helpers.assert_series_equal_msg",
+    "test_aide.equality_helpers.assert_index_equal_msg",
+    "test_aide.equality_helpers.assert_list_tuple_equal_msg",
+    "test_aide.equality_helpers.assert_dict_equal_msg",
+    "test_aide.equality_helpers.assert_equal_msg",
+    "test_aide.equality_helpers.assert_np_nan_eqal_msg",
 ]
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.helpers.assert_equal_dispatch."""
+    """Test arguments for arguments of test_aide.equality_helpers.assert_equal_dispatch."""
 
     expected_arguments = ["expected", "actual", "msg"]
 
-    arg_spec = inspect.getfullargspec(h.assert_equal_dispatch)
+    arg_spec = inspect.getfullargspec(eh.assert_equal_dispatch)
 
     arguments = arg_spec.args
 
@@ -48,24 +48,24 @@ def test_different_types_error():
 
     with pytest.raises(TypeError, match="type mismatch"):
 
-        h.assert_equal_dispatch(expected=1, actual=1.0, msg="test_msg")
+        eh.assert_equal_dispatch(expected=1, actual=1.0, msg="test_msg")
 
 
 @pytest.mark.parametrize(
     "test_function_call, expected_value, pd_testing_function",
     [
         (
-            "test_aide.helpers.assert_frame_equal_msg",
+            "test_aide.equality_helpers.assert_frame_equal_msg",
             pd.DataFrame({"a": [1, 2]}),
             pd.testing.assert_frame_equal,
         ),
         (
-            "test_aide.helpers.assert_series_equal_msg",
+            "test_aide.equality_helpers.assert_series_equal_msg",
             pd.Series([1, 2]),
             pd.testing.assert_series_equal,
         ),
         (
-            "test_aide.helpers.assert_index_equal_msg",
+            "test_aide.equality_helpers.assert_index_equal_msg",
             pd.Index([1, 2]),
             pd.testing.assert_index_equal,
         ),
@@ -79,10 +79,10 @@ def test_pd_types_correct_function_call(
     """
 
     # test_function_call is the function to check has been called
-    # expected_value is the dummy value to use when calling h.assert_equal_dispatch, so test_function_call will be called
+    # expected_value is the dummy value to use when calling eh.assert_equal_dispatch, so test_function_call will be called
     # pd_testing_function is the specific pd.testing function that should be used to compare that type
 
-    # patch all the potential functions that can be called by test_aide.helpers.assert_equal_dispatch
+    # patch all the potential functions that can be called by test_aide.equality_helpers.assert_equal_dispatch
     for x in potential_assert_functions:
 
         mocker.patch(x)
@@ -90,7 +90,9 @@ def test_pd_types_correct_function_call(
     actual_value = expected_value
     msg_value = "test_msg"
 
-    h.assert_equal_dispatch(expected=expected_value, actual=actual_value, msg=msg_value)
+    eh.assert_equal_dispatch(
+        expected=expected_value, actual=actual_value, msg=msg_value
+    )
 
     getter, attribute = _get_target(test_function_call)
 
@@ -144,22 +146,22 @@ def test_pd_types_correct_function_call(
 @pytest.mark.parametrize(
     "expected_function_called, value_to_pass",
     [
-        ("test_aide.helpers.assert_list_tuple_equal_msg", [1, 2]),
-        ("test_aide.helpers.assert_list_tuple_equal_msg", (1, 2)),
-        ("test_aide.helpers.assert_dict_equal_msg", {"a": 1}),
+        ("test_aide.equality_helpers.assert_list_tuple_equal_msg", [1, 2]),
+        ("test_aide.equality_helpers.assert_list_tuple_equal_msg", (1, 2)),
+        ("test_aide.equality_helpers.assert_dict_equal_msg", {"a": 1}),
         (
-            "test_aide.helpers.assert_dict_equal_msg",
+            "test_aide.equality_helpers.assert_dict_equal_msg",
             ReturnKeyDict({"a": 1}),
         ),
-        ("test_aide.helpers.assert_equal_msg", 1),
-        ("test_aide.helpers.assert_equal_msg", 1.0),
-        ("test_aide.helpers.assert_equal_msg", "a"),
-        ("test_aide.helpers.assert_equal_msg", False),
-        ("test_aide.helpers.assert_equal_msg", None),
-        ("test_aide.helpers.assert_equal_msg", np.float64(1)),
-        ("test_aide.helpers.assert_equal_msg", np.int64(1)),
-        ("test_aide.helpers.assert_np_nan_eqal_msg", np.NaN),
-        ("test_aide.helpers.assert_np_nan_eqal_msg", np.float64(np.NaN)),
+        ("test_aide.equality_helpers.assert_equal_msg", 1),
+        ("test_aide.equality_helpers.assert_equal_msg", 1.0),
+        ("test_aide.equality_helpers.assert_equal_msg", "a"),
+        ("test_aide.equality_helpers.assert_equal_msg", False),
+        ("test_aide.equality_helpers.assert_equal_msg", None),
+        ("test_aide.equality_helpers.assert_equal_msg", np.float64(1)),
+        ("test_aide.equality_helpers.assert_equal_msg", np.int64(1)),
+        ("test_aide.equality_helpers.assert_np_nan_eqal_msg", np.NaN),
+        ("test_aide.equality_helpers.assert_np_nan_eqal_msg", np.float64(np.NaN)),
     ],
 )
 def test_non_dataframe_correct_function_call(
@@ -172,7 +174,7 @@ def test_non_dataframe_correct_function_call(
     # function to check has been called
     test_function_call = expected_function_called
 
-    # patch all the potential functions that can be called by test_aide.helpers.assert_equal_dispatch
+    # patch all the potential functions that can be called by test_aide.equality_helpers.assert_equal_dispatch
     for x in potential_assert_functions:
 
         mocker.patch(x)
@@ -181,7 +183,9 @@ def test_non_dataframe_correct_function_call(
     actual_value = expected_value
     msg_value = "test_msg"
 
-    h.assert_equal_dispatch(expected=expected_value, actual=actual_value, msg=msg_value)
+    eh.assert_equal_dispatch(
+        expected=expected_value, actual=actual_value, msg=msg_value
+    )
 
     getter, attribute = _get_target(test_function_call)
 
@@ -244,18 +248,18 @@ def test_other_type_equality_checked():
 
     try:
 
-        h.assert_equal_dispatch(
+        eh.assert_equal_dispatch(
             expected=set(["a"]), actual=set(["a"]), msg="test message b"
         )
 
     except Exception as err:
 
         pytest.fail(
-            f"h.assert_equal_dispatch failed for equal sets call with error; {err}"
+            f"eh.assert_equal_dispatch failed for equal sets call with error; {err}"
         )
 
     with pytest.raises(AssertionError, match="test message"):
 
-        h.assert_equal_dispatch(
+        eh.assert_equal_dispatch(
             expected=set(["a"]), actual=set(["a", "b"]), msg="test message"
         )

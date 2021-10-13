@@ -1,7 +1,7 @@
 import pytest
 import tubular
 import test_aide
-import test_aide.helpers as h
+import test_aide.function_helpers as fh
 import test_aide.test_data as d
 
 
@@ -9,8 +9,8 @@ def test_arguments():
     """Test test_aide.helpers.assert_function_call has expected arguments."""
 
     # use of contextmanager decorator means we need to use .__wrapped__ to get back to original function
-    h.test_function_arguments(
-        func=h.assert_function_call.__wrapped__,
+    fh.test_function_arguments(
+        func=fh.assert_function_call.__wrapped__,
         expected_arguments=["mocker", "target", "attribute", "expected_calls_args"],
         expected_default_values=None,
     )
@@ -27,7 +27,7 @@ def test_mocker_arg_not_mocker_fixture_error():
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             "aaaaaa",
             tubular.base.BaseTransformer,
             "columns_set_or_check",
@@ -42,7 +42,7 @@ def test_expected_calls_args_checks(mocker):
 
     with pytest.raises(TypeError, match="expected_calls_args should be a dict"):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker, tubular.base.BaseTransformer, "__init__", ()
         ):
 
@@ -50,7 +50,7 @@ def test_expected_calls_args_checks(mocker):
 
     with pytest.raises(TypeError, match="expected_calls_args keys should be integers"):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -64,7 +64,7 @@ def test_expected_calls_args_checks(mocker):
         match="expected_calls_args keys should be integers greater than or equal to 0",
     ):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -77,7 +77,7 @@ def test_expected_calls_args_checks(mocker):
         TypeError, match="each value in expected_calls_args should be a dict"
     ):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -91,7 +91,7 @@ def test_expected_calls_args_checks(mocker):
         match="""keys of each sub dict in expected_calls_args should be 'args' and 'kwargs' only""",
     ):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -102,7 +102,7 @@ def test_expected_calls_args_checks(mocker):
 
     with pytest.raises(TypeError, match="args in expected_calls_args should be tuples"):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -115,7 +115,7 @@ def test_expected_calls_args_checks(mocker):
         TypeError, match="kwargs in expected_calls_args should be dicts"
     ):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -134,7 +134,7 @@ def test_mocker_patch_object_call(mocker):
         0: {"args": ("a",), "kwargs": {"other": 1}},
     }
 
-    with h.assert_function_call(
+    with fh.assert_function_call(
         mocker,
         tubular.base.BaseTransformer,
         "__init__",
@@ -169,7 +169,7 @@ def test_successful_function_call(mocker):
         3: {"args": (), "kwargs": {"columns": ["a", "b"]}},
     }
 
-    with h.assert_function_call(
+    with fh.assert_function_call(
         mocker,
         tubular.base.BaseTransformer,
         "__init__",
@@ -196,7 +196,7 @@ def test_not_enough_function_calls_exception(mocker):
         match="not enough calls to __init__, expected at least 6 but got 4",
     ):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -238,7 +238,7 @@ def test_incorrect_call_args_exception(mocker, expected_args):
 
     with pytest.raises(AssertionError):
 
-        with h.assert_function_call(
+        with fh.assert_function_call(
             mocker,
             tubular.base.BaseTransformer,
             "__init__",
@@ -256,7 +256,9 @@ def test_assert_dict_equal_msg_call(mocker):
     """Test the calls to assert_dict_equal_msg."""
 
     # this is patched so it will not cause errors below when expected_args do not match
-    mocked_dict_assert = mocker.patch.object(test_aide.helpers, "assert_dict_equal_msg")
+    mocked_dict_assert = mocker.patch.object(
+        test_aide.function_helpers, "assert_dict_equal_msg"
+    )
 
     expected_args = {
         0: {"args": ("a",), "kwargs": {"other": 1}},
@@ -265,7 +267,7 @@ def test_assert_dict_equal_msg_call(mocker):
         3: {"args": (), "kwargs": {"columns": ["a", "c"]}},
     }
 
-    with h.assert_function_call(
+    with fh.assert_function_call(
         mocker,
         tubular.base.BaseTransformer,
         "__init__",
@@ -336,7 +338,7 @@ def test_assert_list_tuple_equal_msg_call(mocker):
 
     # this is patched so it will not cause errors below when expected_args do not match
     mocked_dict_assert = mocker.patch.object(
-        test_aide.helpers, "assert_list_tuple_equal_msg"
+        test_aide.function_helpers, "assert_list_tuple_equal_msg"
     )
 
     expected_args = {
@@ -346,7 +348,7 @@ def test_assert_list_tuple_equal_msg_call(mocker):
         3: {"args": (), "kwargs": {"columns": "a"}},
     }
 
-    with h.assert_function_call(
+    with fh.assert_function_call(
         mocker,
         tubular.base.BaseTransformer,
         "__init__",

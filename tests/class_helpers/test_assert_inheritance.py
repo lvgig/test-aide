@@ -1,6 +1,6 @@
 import inspect
 import pytest
-import test_aide.helpers as h
+import test_aide.class_helpers as ch
 from unittest import mock
 
 
@@ -9,7 +9,7 @@ def test_arguments():
 
     expected_arguments = ["obj", "cls"]
 
-    arg_spec = inspect.getfullargspec(h.assert_inheritance)
+    arg_spec = inspect.getfullargspec(ch.assert_inheritance)
 
     arguments = arg_spec.args
 
@@ -25,13 +25,13 @@ def test_arguments():
 def test_check_is_class_call():
     """Test the call to test_aide.helpers.check_is_class."""
 
-    with mock.patch("test_aide.helpers.check_is_class") as mocked_method:
+    with mock.patch("test_aide.class_helpers.check_is_class") as mocked_method:
 
-        h.assert_inheritance(1, int)
+        ch.assert_inheritance(1, int)
 
         assert (
             mocked_method.call_count == 1
-        ), f"Unexpected number of call to h.check_is_class -\n  Expected: 1\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpected number of call to ch.check_is_class -\n  Expected: 1\n  Actual: {mocked_method.call_count}"
 
         call_1_args = mocked_method.call_args_list[0]
         call_1_pos_args = call_1_args[0]
@@ -57,13 +57,13 @@ def test_check_is_class_call():
 def test_isinstance_call():
     """Test the call to isinstance."""
 
-    with mock.patch("test_aide.helpers.isinstance") as mocked_method:
+    with mock.patch("test_aide.class_helpers.isinstance") as mocked_method:
 
-        h.assert_inheritance(1, int)
+        ch.assert_inheritance(1, int)
 
         assert (
             mocked_method.call_count == 1
-        ), f"Unexpected number of call to h.check_is_class -\n  Expected: 1\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpected number of call to ch.check_is_class -\n  Expected: 1\n  Actual: {mocked_method.call_count}"
 
         call_1_args = mocked_method.call_args_list[0]
         call_1_pos_args = call_1_args[0]
@@ -98,4 +98,4 @@ def test_error():
         match=f"Incorrect inheritance - passed obj of class {(1).__class__.__name__} is not an instance of {float}",
     ):
 
-        h.assert_inheritance(1, float)
+        ch.assert_inheritance(1, float)

@@ -1,6 +1,6 @@
 import pytest
 import tubular
-import test_aide.helpers as h
+import test_aide.function_helpers as fh
 import test_aide.test_data as d
 
 
@@ -8,8 +8,8 @@ def test_arguments():
     """Test test_aide.helpers.assert_function_call_count has expected arguments."""
 
     # use of contextmanager decorator means we need to use .__wrapped__ to get back to original function
-    h.test_function_arguments(
-        func=h.assert_function_call_count.__wrapped__,
+    fh.test_function_arguments(
+        func=fh.assert_function_call_count.__wrapped__,
         expected_arguments=["mocker", "target", "attribute", "expected_n_calls"],
         expected_default_values=None,
     )
@@ -26,7 +26,7 @@ def test_mocker_arg_not_mocker_fixture_error():
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call_count(
+        with fh.assert_function_call_count(
             "aaaaaa", tubular.base.BaseTransformer, "columns_set_or_check", 1
         ):
 
@@ -38,7 +38,7 @@ def test_mocker_patch_object_call(mocker):
 
     mocked = mocker.spy(mocker.patch, "object")
 
-    with h.assert_function_call_count(
+    with fh.assert_function_call_count(
         mocker,
         tubular.base.BaseTransformer,
         "__init__",
@@ -65,13 +65,13 @@ def test_mocker_patch_object_call(mocker):
 
 
 def test_successful_usage(mocker):
-    """Test an example of successful run of h.assert_function_call_count."""
+    """Test an example of successful run of fh.assert_function_call_count."""
 
     df = d.create_df_1()
 
     x = tubular.base.BaseTransformer(columns="a")
 
-    with h.assert_function_call_count(
+    with fh.assert_function_call_count(
         mocker, tubular.base.BaseTransformer, "columns_set_or_check", 1
     ):
 
@@ -90,7 +90,7 @@ def test_exception_raised_more_calls_expected(mocker):
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call_count(
+        with fh.assert_function_call_count(
             mocker, tubular.base.BaseTransformer, "columns_set_or_check", 2
         ):
 
@@ -109,7 +109,7 @@ def test_exception_raised_more_calls_expected2(mocker):
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call_count(
+        with fh.assert_function_call_count(
             mocker, tubular.base.BaseTransformer, "__init__", 4
         ):
 
@@ -128,7 +128,7 @@ def test_exception_raised_less_calls_expected(mocker):
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call_count(
+        with fh.assert_function_call_count(
             mocker, tubular.base.BaseTransformer, "columns_set_or_check", 1
         ):
 
@@ -148,7 +148,7 @@ def test_exception_raised_less_calls_expected2(mocker):
 
         x = tubular.base.BaseTransformer(columns="a")
 
-        with h.assert_function_call_count(
+        with fh.assert_function_call_count(
             mocker, tubular.base.BaseTransformer, "columns_set_or_check", 0
         ):
 

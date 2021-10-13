@@ -1,6 +1,6 @@
 import pytest
 import inspect
-import test_aide.helpers as h
+import test_aide.equality_helpers as eh
 
 import numpy as np
 
@@ -10,7 +10,7 @@ def test_arguments():
 
     expected_arguments = ["actual", "expected", "msg"]
 
-    arg_spec = inspect.getfullargspec(h.assert_np_nan_eqal_msg)
+    arg_spec = inspect.getfullargspec(eh.assert_np_nan_eqal_msg)
 
     arguments = arg_spec.args
 
@@ -40,4 +40,4 @@ def test_error_raised_unequal(expected, actual):
         match=f"Both values are not equal to np.NaN -\n  Expected: {expected}\n  Actual: {actual}",
     ):
 
-        h.assert_np_nan_eqal_msg(expected=expected, actual=actual, msg=msg_tag)
+        eh.assert_np_nan_eqal_msg(expected=expected, actual=actual, msg=msg_tag)
