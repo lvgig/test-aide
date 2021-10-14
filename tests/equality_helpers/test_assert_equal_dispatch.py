@@ -16,6 +16,7 @@ potential_assert_functions = [
     "test_aide.equality_helpers.assert_dict_equal_msg",
     "test_aide.equality_helpers.assert_equal_msg",
     "test_aide.equality_helpers.assert_np_nan_eqal_msg",
+    "test_aide.equality_helpers.assert_array_equal_msg",
 ]
 
 
@@ -114,6 +115,82 @@ def test_pd_types_correct_function_call(
 
     pd_testing_function(call_1_expected_pos_arg[0], call_1_pos_args[0])
     pd_testing_function(call_1_expected_pos_arg[1], call_1_pos_args[1])
+
+    e = call_1_expected_pos_arg[2]
+    a = call_1_pos_args[2]
+
+    assert (
+        e == a
+    ), f"Unexpected last positional arg in call to {test_function_call} -\n  Expected: {e}\n  Actual: {a}"
+
+    assert (
+        call_1_kwargs == {}
+    ), f"Unexpected keyword args in call to {test_function_call} -\n  Expected: None\n  Actual:  {call_1_kwargs}"
+
+    # get functions that should not have been called
+    test_functions_not_call = list(
+        set(potential_assert_functions) - set([test_function_call])
+    )
+
+    # loop through each one and test it has not been called
+    for test_function_not_call in test_functions_not_call:
+
+        getter, attribute = _get_target(test_function_not_call)
+
+        mocked_function_not_call = getattr(getter(), attribute)
+
+        assert (
+            mocked_function_not_call.call_count == 0
+        ), f"Unexpected number of calls to {test_function_not_call} -\n  Expected:  0\n  Actual:  {mocked_function_not_call.call_count}"
+
+
+@pytest.mark.parametrize(
+    "expected_value",
+    [
+        np.array([]),
+        np.array([0, 1, 2]),
+        np.array([[1, 2], [3, 4]]),
+        np.array([np.nan, np.nan]),
+    ],
+)
+def test_np_array_correct_function_call(mocker, expected_value):
+    """Test that assert_array_equal_msg called correctly when expected is a numpy array"""
+
+    # function to check has been called
+    test_function_call = "test_aide.equality_helpers.assert_array_equal_msg"
+
+    # patch all the potential functions that can be called by test_aide.equality_helpers.assert_equal_dispatch
+    for x in potential_assert_functions:
+
+        mocker.patch(x)
+
+    actual_value = expected_value
+    msg_value = "test_msg"
+
+    eh.assert_equal_dispatch(
+        expected=expected_value, actual=actual_value, msg=msg_value
+    )
+
+    getter, attribute = _get_target(test_function_call)
+
+    mocked_function_call = getattr(getter(), attribute)
+
+    assert (
+        mocked_function_call.call_count == 1
+    ), f"Unexpected number of calls to {test_function_call} with {expected_value} -\n  Expected:  1\n  Actual:  {mocked_function_call.call_count}"
+
+    call_1_args = mocked_function_call.call_args_list[0]
+    call_1_pos_args = call_1_args[0]
+    call_1_kwargs = call_1_args[1]
+
+    call_1_expected_pos_arg = (expected_value, actual_value, msg_value)
+
+    assert len(call_1_pos_args) == len(
+        call_1_expected_pos_arg
+    ), f"Unexpected number of positional args in call to {test_function_call} -\n  Expected: {len(call_1_expected_pos_arg)}\n  Actual:  {len(call_1_pos_args)}"
+
+    np.testing.assert_array_equal(call_1_expected_pos_arg[0], call_1_pos_args[0])
+    np.testing.assert_array_equal(call_1_expected_pos_arg[1], call_1_pos_args[1])
 
     e = call_1_expected_pos_arg[2]
     a = call_1_pos_args[2]

@@ -21,6 +21,7 @@ def assert_equal_dispatch(expected, actual, msg):
     - dict
     - np.float
     - np.NaN
+    - np.ndarray
     if on object is passed that is not one of the above types then the standard assert for
     equality is used.
 
@@ -69,6 +70,10 @@ def assert_equal_dispatch(expected, actual, msg):
     ):
 
         assert_np_nan_eqal_msg(actual, expected, msg)
+
+    elif type(expected) is np.ndarray:
+
+        assert_array_equal_msg(actual, expected, msg)
 
     else:
 
@@ -323,6 +328,62 @@ def assert_index_equal_msg(
     try:
 
         pd.testing.assert_index_equal(expected, actual, **kwargs)
+
+    except Exception as e:
+
+        if print_actual_and_expected:
+
+            error_msg = f"""{msg_tag}\nexpected:\n{expected}\nactual:\n{actual}"""
+
+        else:
+
+            error_msg = msg_tag
+
+        raise AssertionError(error_msg) from e
+
+
+def assert_array_equal_msg(
+    actual, expected, msg_tag, print_actual_and_expected=False, **kwargs
+):
+    """Compares actual and expected np.arrays and asserts equality.
+    Calls np.testing.assert_array_equal but presents msg_tag, and optionally actual and expected
+    arrays, in addition to any other exception info.
+
+    Parameters
+    ----------
+    actual : numpy array
+        The actual array.
+
+    expected : numpy array
+        The expected array.
+
+    msg_tag : string
+        A tag for the assert error message.
+
+    print_actual_and_expected : Boolean
+        print the actual and expected arrays along with error message tag
+
+    **kwargs:
+        Keyword args passed to np.testing.assert_array_equal.
+    """
+    # If actual or expected is a scalar, numpy will check whether each entry in
+    # the other array is equal to the scalar. Therefore need to check type.
+
+    if not isinstance(expected, np.ndarray):
+
+        raise TypeError(
+            f"expected should be of type numpy ndarray, but got {type(expected)}"
+        )
+
+    if not isinstance(actual, np.ndarray):
+
+        raise TypeError(
+            f"actual should be of type numpy ndarray, but got {type(actual)}"
+        )
+
+    try:
+
+        np.testing.assert_array_equal(expected, actual, **kwargs)
 
     except Exception as e:
 
