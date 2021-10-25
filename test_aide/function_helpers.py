@@ -1,4 +1,7 @@
-"""This module contains helper functions that are used in the tests."""
+"""
+This module contains helper functions that simplify testing functions themselves
+e.g. testing a particular function has been called in a particular way.
+"""
 
 import inspect
 from test_aide.equality_helpers import (

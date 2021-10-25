@@ -1,4 +1,8 @@
-"""This module contains helper functions that are used in the tests."""
+"""
+This module contains helper functions that create pytest params subsets of input
+pandas.DataFrames to repeat tests that transform data more easily on susbsets of
+the passed data.
+"""
 
 import pandas as pd
 import numpy as np

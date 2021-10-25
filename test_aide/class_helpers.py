@@ -1,4 +1,7 @@
-"""This module contains helper functions that are used in the tests."""
+"""
+This module contains helper functions that deal with classes and the methods and 
+attributes of objects.
+"""
 
 import inspect
 from test_aide.equality_helpers import assert_equal_dispatch
