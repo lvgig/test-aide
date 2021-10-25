@@ -2,28 +2,27 @@
 
 ----
 
-`test-aide` includes helper functions to simplify unit tests.
+`test-aide` is a lightweight package containing helper functions to simplify certain aspects of unit testing. See the [documentation](https://test-aide.readthedocs.io/en/latest/) for the full list of features.
 
+The `equality` module contains helpers that simplfy asserting equality when working with `pandas` or `numpy` types, in particular when working with these types nested in other data structures e.g. a dict containing ``pandas.DataFrame`` object(s).
+
+The `functions` module contains helpers that simplfy asserting that a function was called in a particular way. The functions `assert_function_call` and `assert_function_call_count` are available to be used as context managers to test a function is called in a certain way and called a specific number of times respectively.
 
 ## Installation
 
-test-aide can be installed from PyPI simply with;
+`test-aide` can be installed from PyPI simply with;
 
  `pip install test-aide`
 
 ## Documentation
 
-To build local documentation, specify the environment variable $SPHINX_BUILD_DIR$, and then
-run from the `docs/` directory
+Documentation for the package can be found on [readthedocs](https://test-aide.readthedocs.io/en/latest/).
+
+To build the html documentation locally, from the `docs` directory run the following;
 
 ```shell
-make apidoc
 make html
 ```
-
-## Examples
-
-To help get started there are example notebooks in the [examples](https://github.com/lvgig/test-aide/tree/master/examples) folder that show how to use each transformer as well as an example of putting several together in a Pipeline.
 
 ## Build and test
 
@@ -36,13 +35,13 @@ git clone https://github.com/lvgig/test-aide.git
 cd test-aide
 ```
 
-Then install test-aide in editable mode;
+Then install `test-aide` in editable mode;
 
 ```shell
 pip install -e . -r requirements-dev.txt
 ```
 
-Then run the tests simply with pytest
+Then run the tests simply with `pytest`;
 
 ```shell
 pytest
@@ -50,6 +49,8 @@ pytest
 
 ## Contribute
 
-`test-aide` is under active development, we're super excited if you're interested in contributing! See the `CONTRIBUTING.md` for the full details of our working practices.
+`test-aide` is under active development, we're super excited if you're interested in contributing! 
+
+See the [CONTRIBUTING](https://github.com/lvgig/test-aide/blob/master/CONTRIBUTING.md) file for the full details of our working practices.
 
 For bugs and feature requests please open an [issue](https://github.com/lvgig/test-aide/issues).
