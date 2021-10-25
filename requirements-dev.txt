@@ -1,9 +1,7 @@
 pandas>=0.25.1
-tubular>=0.2.14
 pytest>=5.4.1
 pytest-mock>=3.5.1
 pytest-cov>=2.10.1
-pytest-benchmark
 pre-commit==2.15.0
 black>=21.9b0
 flake8==3.9.2
