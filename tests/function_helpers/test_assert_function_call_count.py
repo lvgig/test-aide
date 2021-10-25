@@ -39,11 +39,7 @@ def test_mocker_patch_object_call(mocker):
     mocked = mocker.spy(mocker.patch, "object")
 
     with fh.assert_function_call_count(
-        mocker,
-        tubular.base.BaseTransformer,
-        "__init__",
-        1,
-        return_value=None,
+        mocker, tubular.base.BaseTransformer, "__init__", 1, return_value=None
     ):
 
         tubular.imputers.BaseImputer("a", other=1)

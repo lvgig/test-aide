@@ -39,9 +39,7 @@ def test__index_preserved_params_call():
     df2 = pd.DataFrame({"a": [2, 3, 4], "b": [5, 6, 7]}, index=[7, 8, 9])
     seed = 1
 
-    with mock.patch.object(
-        test_aide.pandas, "index_preserved_params"
-    ) as mocked:
+    with mock.patch.object(test_aide.pandas, "index_preserved_params") as mocked:
 
         ph.adjusted_dataframe_params(df1, df2, seed=seed)
 
@@ -139,12 +137,7 @@ def test_returned_object():
     expected_df_pairs.append((df1, df2))
 
     expected_ids.extend(
-        [
-            "random index",
-            "decreasing index",
-            "increasing index",
-            "original index",
-        ]
+        ["random index", "decreasing index", "increasing index", "original index"]
     )
 
     results = ph.adjusted_dataframe_params(df1, df2, seed=seed_value)

@@ -130,9 +130,7 @@ def test_mocker_patch_object_call(mocker):
 
     mocked = mocker.spy(mocker.patch, "object")
 
-    expected_call_arguments = {
-        0: {"args": ("a",), "kwargs": {"other": 1}},
-    }
+    expected_call_arguments = {0: {"args": ("a",), "kwargs": {"other": 1}}}
 
     with fh.assert_function_call(
         mocker,

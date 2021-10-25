@@ -79,9 +79,7 @@ def test_assert_equal_dispatch_calls():
     actual_value = [1, 2, 3]
     msg_tag_value = "test_msg"
 
-    with mock.patch(
-        target="test_aide.equality.assert_equal_dispatch"
-    ) as mocked_method:
+    with mock.patch(target="test_aide.equality.assert_equal_dispatch") as mocked_method:
 
         eh.assert_list_tuple_equal_msg(
             expected=expected_value, actual=actual_value, msg_tag=msg_tag_value

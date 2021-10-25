@@ -226,10 +226,7 @@ def test_np_array_correct_function_call(mocker, expected_value):
         ("test_aide.equality.assert_list_tuple_equal_msg", [1, 2]),
         ("test_aide.equality.assert_list_tuple_equal_msg", (1, 2)),
         ("test_aide.equality.assert_dict_equal_msg", {"a": 1}),
-        (
-            "test_aide.equality.assert_dict_equal_msg",
-            ReturnKeyDict({"a": 1}),
-        ),
+        ("test_aide.equality.assert_dict_equal_msg", ReturnKeyDict({"a": 1})),
         ("test_aide.equality.assert_equal_msg", 1),
         ("test_aide.equality.assert_equal_msg", 1.0),
         ("test_aide.equality.assert_equal_msg", "a"),

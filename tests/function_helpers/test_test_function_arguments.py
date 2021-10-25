@@ -114,9 +114,7 @@ def test_different_number_arguments_error():
 def test_assert_equal_msg_calls_for_positional_arguments():
     """Test the calls to assert_equal_msg for the positional arguments."""
 
-    with mock.patch(
-        target="test_aide.functions.assert_equal_msg"
-    ) as mocked_method:
+    with mock.patch(target="test_aide.functions.assert_equal_msg") as mocked_method:
 
         expected_args = ["obj", "expected_method", "msg"]
 
@@ -223,9 +221,7 @@ def test_different_number_default_values_error():
 def test_assert_equal_msg_calls_for_default_values():
     """Test the calls to assert_equal_msg for the keyword arguments."""
 
-    with mock.patch(
-        target="test_aide.functions.assert_equal_msg"
-    ) as mocked_method:
+    with mock.patch(target="test_aide.functions.assert_equal_msg") as mocked_method:
 
         expected_args = ["self", "data", "index", "columns", "dtype", "copy"]
         expected_default_values = (None, None, None, None, False)

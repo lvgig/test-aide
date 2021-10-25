@@ -112,9 +112,7 @@ def test_n_assert_equal_dispatch_calls():
 
     expected_attributes = {"a": 1, "b": 2, "c": 3}
 
-    with mock.patch(
-        target="test_aide.classes.assert_equal_dispatch"
-    ) as mocked_method:
+    with mock.patch(target="test_aide.classes.assert_equal_dispatch") as mocked_method:
 
         ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="msg"
@@ -134,9 +132,7 @@ def test_assert_equal_dispatch_calls():
 
     call_n = 0
 
-    with mock.patch(
-        target="test_aide.classes.assert_equal_dispatch"
-    ) as mocked_method:
+    with mock.patch(target="test_aide.classes.assert_equal_dispatch") as mocked_method:
 
         ch.test_object_attributes(
             obj=x, expected_attributes=expected_attributes, msg="test_msg"
