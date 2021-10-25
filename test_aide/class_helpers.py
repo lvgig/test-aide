@@ -1,5 +1,5 @@
 """
-This module contains helper functions that deal with classes and the methods and 
+This module contains helper functions that deal with classes and the methods and
 attributes of objects.
 """
 

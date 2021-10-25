@@ -1,6 +1,6 @@
 """
 This module contains helper functions that simplify asserting equality for types
-where it is not possible to simply assert a == b (e.g. pandas.DataFrame) or 
+where it is not possible to simply assert a == b (e.g. pandas.DataFrame) or
 nested data structures containing these types.
 """
 
