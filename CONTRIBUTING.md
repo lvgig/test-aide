@@ -10,15 +10,13 @@ For any bugs, issues or feature requests please open an [issue](https://github.c
 
 ## Requirements for contributions
 
-We have some general requirements for all contributions then specific requirements when adding completely new transformers to the package. This is to ensure consistency with the existing codebase.
-
 ### Code formatting
 
-Contributions should be formatted with `black`. There is a `pre-commit` file in the `.githooks` folder that can be activated for your local clone of the repo with `git config core.hooksPath .githooks`.
+Contributions should be formatted with `black` and naming should follow [pep8](https://www.python.org/dev/peps/pep-0008/). The project uses [pre-commit](https://pre-commit.com/) to manage pre-commit hooks. After setting up your development environment simple run `pre-commit install` to initalise pre-commit for the repository. Black is included in the pre-commit hook configuration.
 
 ### Tests
 
-All existing tests must pass and new functionality added must be tested. Tests must be written with [pytest](https://docs.pytest.org/en/stable/). The tests for existing transformers give great examples to work from that show what is expected to be covered in the tests.
+All existing tests must pass and new functionality added must be tested. Tests must be written with [pytest](https://docs.pytest.org/en/stable/). We aim for 100% coverage of new functionality.
 
 ### Docstrings
 
@@ -26,22 +24,7 @@ Docstrings need to be updated or added for new functionality.
 
 ## List of contributors
 
-- [richardangell](https://github.com/richardangell)
 - [shreenapatel](https://github.com/shreenapatel)
+- [richardangell](https://github.com/richardangell)
 
-Prior to the open source release of the package there have been contributions from many individuals in the LV GI Data Science team;
-
-- Richard Angell
-- Ned Webster
-- Dapeng Wang
-- David Silverstone
-- Shreena Patel
-- Angelos Charitidis
-- David Hopkinson
-- Liam Holmes
-- Sandeep Karkhanis
-- KarHor Yap
-- Alistair Rogers
-- Maria Navarro
-- Marek Allen
-- James Payne
+Prior to the open source release of the package the functionality lived in the [tubular](https://github.com/lvgig/tubular) package of which there were many [contributors](https://github.com/lvgig/tubular/blob/master/CONTRIBUTING.md#list-of-contributors) from the LV= GI Data Science Team. 
