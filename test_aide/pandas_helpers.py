@@ -111,3 +111,20 @@ def index_preserved_params(df_1, df_2, seed=0):
     params.append(pytest.param(df_1, df_2, id="original index"))
 
     return params
+
+
+def adjusted_dataframe_params(df_1, df_2, seed=0):
+    """Wrapper function to create copies of input pd.DataFrames pairs and adjust
+    either the index of the dataframe, or split the dataframe into individual rows.
+    The last item in the list is a pytest.param of the original inputs.
+
+    This function can be used in combination with the pytest.mark.parametrize decorator
+    to easily test that a transformer transform method preserves the index of the input,
+    and gives the expected outputs, when called row by row as well as multi row inputs.
+    """
+
+    row_params = row_by_row_params(df_1, df_2)
+    index_params = index_preserved_params(df_1, df_2, seed)
+
+    # remove last row param as this is a duplication of the last item of index_params
+    return row_params[:-1] + index_params
