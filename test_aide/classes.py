@@ -4,7 +4,7 @@ attributes of objects.
 """
 
 import inspect
-from test_aide.equality_helpers import assert_equal_dispatch
+from test_aide.equality import assert_equal_dispatch
 
 
 def check_is_class(class_to_check):

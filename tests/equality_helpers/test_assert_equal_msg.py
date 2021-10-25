@@ -1,10 +1,10 @@
 import pytest
 import inspect
-import test_aide.equality_helpers as eh
+import test_aide.equality as eh
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.testing.equality_helpers.assert_equal_msg."""
+    """Test arguments for arguments of test_aide.testing.equality.assert_equal_msg."""
 
     expected_arguments = ["actual", "expected", "msg_tag"]
 

@@ -1,11 +1,11 @@
 import inspect
 import pytest
-import test_aide.class_helpers as ch
+import test_aide.classes as ch
 from unittest import mock
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.class_helpers.assert_inheritance."""
+    """Test arguments for arguments of test_aide.classes.assert_inheritance."""
 
     expected_arguments = ["obj", "cls"]
 
@@ -23,9 +23,9 @@ def test_arguments():
 
 
 def test_check_is_class_call():
-    """Test the call to test_aide.class_helpers.check_is_class."""
+    """Test the call to test_aide.classes.check_is_class."""
 
-    with mock.patch("test_aide.class_helpers.check_is_class") as mocked_method:
+    with mock.patch("test_aide.classes.check_is_class") as mocked_method:
 
         ch.assert_inheritance(1, int)
 
@@ -57,7 +57,7 @@ def test_check_is_class_call():
 def test_isinstance_call():
     """Test the call to isinstance."""
 
-    with mock.patch("test_aide.class_helpers.isinstance") as mocked_method:
+    with mock.patch("test_aide.classes.isinstance") as mocked_method:
 
         ch.assert_inheritance(1, int)
 

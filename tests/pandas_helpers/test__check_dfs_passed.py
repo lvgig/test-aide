@@ -1,11 +1,11 @@
 import pytest
 import inspect
-import test_aide.pandas_helpers as ph
+import test_aide.pandas as ph
 import pandas as pd
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.pandas_helpers._check_dfs_passed."""
+    """Test arguments for arguments of test_aide.pandas._check_dfs_passed."""
 
     expected_arguments = ["df_1", "df_2"]
 
@@ -29,7 +29,7 @@ def test_arguments():
 
 
 def test_exceptions_raised():
-    """Test that the expected exceptions are raised by test_aide.pandas_helpers._check_dfs_passed."""
+    """Test that the expected exceptions are raised by test_aide.pandas._check_dfs_passed."""
 
     with pytest.raises(
         TypeError, match=r"expecting first positional arg to be a pd.DataFrame.*"

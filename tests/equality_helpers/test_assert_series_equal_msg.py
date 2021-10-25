@@ -3,7 +3,7 @@ import pandas
 import inspect
 import pytest
 
-import test_aide.equality_helpers as eh
+import test_aide.equality as eh
 
 
 def test_arguments():

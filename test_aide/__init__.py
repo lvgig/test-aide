@@ -2,15 +2,15 @@
 from ._version import __version__
 
 from . import test_data
-from . import class_helpers
-from . import function_helpers
+from . import classes
+from . import functions
 
 try:
-    from . import equality_helpers
+    from . import equality
 except ImportError:
     pass
 
 try:
-    from . import pandas_helpers
+    from . import pandas
 except ImportError:
     pass

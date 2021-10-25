@@ -1,11 +1,11 @@
 import pytest
 import inspect
-import test_aide.equality_helpers as eh
+import test_aide.equality as eh
 from unittest import mock
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.equality_helpers.assert_list_tuple_equal_msg."""
+    """Test arguments for arguments of test_aide.equality.assert_list_tuple_equal_msg."""
 
     expected_arguments = ["actual", "expected", "msg_tag"]
 
@@ -73,14 +73,14 @@ def test_different_lengths_error():
 
 
 def test_assert_equal_dispatch_calls():
-    """Test the calls to test_aide.equality_helpers.assert_equal_dispatch."""
+    """Test the calls to test_aide.equality.assert_equal_dispatch."""
 
     expected_value = [1, 2, 3]
     actual_value = [1, 2, 3]
     msg_tag_value = "test_msg"
 
     with mock.patch(
-        target="test_aide.equality_helpers.assert_equal_dispatch"
+        target="test_aide.equality.assert_equal_dispatch"
     ) as mocked_method:
 
         eh.assert_list_tuple_equal_msg(
@@ -89,7 +89,7 @@ def test_assert_equal_dispatch_calls():
 
         assert mocked_method.call_count == len(
             expected_value
-        ), f"Unexpeted number of calls to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: {len(expected_value)}\n  Actual: {mocked_method.call_count}"
+        ), f"Unexpeted number of calls to test_aide.equality.assert_equal_dispatch -\n  Expected: {len(expected_value)}\n  Actual: {mocked_method.call_count}"
 
         for i, (e, a) in enumerate(zip(expected_value, actual_value)):
 
@@ -101,14 +101,14 @@ def test_assert_equal_dispatch_calls():
 
             assert (
                 call_n_kwargs == {}
-            ), f"Unexpected call keyword args in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: None\n  Actual: {call_n_kwargs}"
+            ), f"Unexpected call keyword args in call {i} to test_aide.equality.assert_equal_dispatch -\n  Expected: None\n  Actual: {call_n_kwargs}"
 
             assert len(call_n_pos_args) == len(
                 expected_pos_args
-            ), f"Difference in number of positional arguments in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n  Expected: {len(expected_pos_args)}\n  Actual: {len(call_n_pos_args)}"
+            ), f"Difference in number of positional arguments in call {i} to test_aide.equality.assert_equal_dispatch -\n  Expected: {len(expected_pos_args)}\n  Actual: {len(call_n_pos_args)}"
 
             for j, (e, a) in enumerate(zip(call_n_pos_args, expected_pos_args)):
 
                 assert (
                     e == a
-                ), f"Difference in positional args at index {j} in call {i} to test_aide.equality_helpers.assert_equal_dispatch -\n Expected: {e}\n  Actual: {a}"
+                ), f"Difference in positional args at index {j} in call {i} to test_aide.equality.assert_equal_dispatch -\n Expected: {e}\n  Actual: {a}"

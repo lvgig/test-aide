@@ -1,6 +1,6 @@
 import inspect
 import pytest
-import test_aide.class_helpers as ch
+import test_aide.classes as ch
 from unittest import mock
 
 
@@ -14,7 +14,7 @@ class DummyClass:
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.class_helpers.test_object_attributes."""
+    """Test arguments for arguments of test_aide.classes.test_object_attributes."""
 
     expected_arguments = ["obj", "expected_attributes", "msg"]
 
@@ -44,11 +44,11 @@ def test_n_getattr_calls():
 
     expected_attributes = {"a": 1, "b": 2, "c": 3}
 
-    with mock.patch(target="test_aide.class_helpers.getattr") as mocked_method:
+    with mock.patch(target="test_aide.classes.getattr") as mocked_method:
 
         # mock assert_equal_dispatch (called by test_object_attributes) so it does not error from
         # getattr not returning the right things - as it is mocked
-        with mock.patch(target="test_aide.class_helpers.assert_equal_dispatch"):
+        with mock.patch(target="test_aide.classes.assert_equal_dispatch"):
 
             ch.test_object_attributes(
                 obj=x, expected_attributes=expected_attributes, msg="msg"
@@ -68,11 +68,11 @@ def test_getattr_calls():
 
     call_n = 0
 
-    with mock.patch(target="test_aide.class_helpers.getattr") as mocked_method:
+    with mock.patch(target="test_aide.classes.getattr") as mocked_method:
 
         # again mock assert_equal_dispatch (called by test_object_attributes) so it does not error from
         # getattr not returning the right things - as it is mocked
-        with mock.patch(target="test_aide.class_helpers.assert_equal_dispatch"):
+        with mock.patch(target="test_aide.classes.assert_equal_dispatch"):
 
             ch.test_object_attributes(
                 obj=x, expected_attributes=expected_attributes, msg="msg"
@@ -106,14 +106,14 @@ def test_getattr_calls():
 
 
 def test_n_assert_equal_dispatch_calls():
-    """Test the number of calls to test_aide.class_helpers.assert_equal_dispatch."""
+    """Test the number of calls to test_aide.classes.assert_equal_dispatch."""
 
     x = DummyClass()
 
     expected_attributes = {"a": 1, "b": 2, "c": 3}
 
     with mock.patch(
-        target="test_aide.class_helpers.assert_equal_dispatch"
+        target="test_aide.classes.assert_equal_dispatch"
     ) as mocked_method:
 
         ch.test_object_attributes(
@@ -135,7 +135,7 @@ def test_assert_equal_dispatch_calls():
     call_n = 0
 
     with mock.patch(
-        target="test_aide.class_helpers.assert_equal_dispatch"
+        target="test_aide.classes.assert_equal_dispatch"
     ) as mocked_method:
 
         ch.test_object_attributes(

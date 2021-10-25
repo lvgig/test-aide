@@ -1,11 +1,11 @@
 import pytest
 import tubular
-import test_aide.function_helpers as fh
+import test_aide.functions as fh
 import test_aide.test_data as d
 
 
 def test_arguments():
-    """Test test_aide.function_helpers.assert_function_call_count has expected arguments."""
+    """Test test_aide.functions.assert_function_call_count has expected arguments."""
 
     # use of contextmanager decorator means we need to use .__wrapped__ to get back to original function
     fh.test_function_arguments(

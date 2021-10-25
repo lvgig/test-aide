@@ -1,12 +1,12 @@
 import pytest
 import tubular
 import test_aide
-import test_aide.function_helpers as fh
+import test_aide.functions as fh
 import test_aide.test_data as d
 
 
 def test_arguments():
-    """Test test_aide.function_helpers.assert_function_call has expected arguments."""
+    """Test test_aide.functions.assert_function_call has expected arguments."""
 
     # use of contextmanager decorator means we need to use .__wrapped__ to get back to original function
     fh.test_function_arguments(
@@ -257,7 +257,7 @@ def test_assert_dict_equal_msg_call(mocker):
 
     # this is patched so it will not cause errors below when expected_args do not match
     mocked_dict_assert = mocker.patch.object(
-        test_aide.function_helpers, "assert_dict_equal_msg"
+        test_aide.functions, "assert_dict_equal_msg"
     )
 
     expected_args = {
@@ -282,7 +282,7 @@ def test_assert_dict_equal_msg_call(mocker):
 
     assert (
         mocked_dict_assert.call_count == 4
-    ), "unexpected number of calls to test_aide.function_helpers.assert_dict_equal_msg"
+    ), "unexpected number of calls to test_aide.functions.assert_dict_equal_msg"
 
     call_n_args = mocked_dict_assert.call_args_list[0]
     call_n_pos_args = call_n_args[0]
@@ -338,7 +338,7 @@ def test_assert_list_tuple_equal_msg_call(mocker):
 
     # this is patched so it will not cause errors below when expected_args do not match
     mocked_dict_assert = mocker.patch.object(
-        test_aide.function_helpers, "assert_list_tuple_equal_msg"
+        test_aide.functions, "assert_list_tuple_equal_msg"
     )
 
     expected_args = {
@@ -363,7 +363,7 @@ def test_assert_list_tuple_equal_msg_call(mocker):
 
     assert (
         mocked_dict_assert.call_count == 4
-    ), "unexpected number of calls to test_aide.function_helpers.assert_list_tuple_equal_msg"
+    ), "unexpected number of calls to test_aide.functions.assert_list_tuple_equal_msg"
 
     call_n_args = mocked_dict_assert.call_args_list[0]
     call_n_pos_args = call_n_args[0]

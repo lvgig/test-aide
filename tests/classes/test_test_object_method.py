@@ -1,6 +1,6 @@
 import inspect
 import pytest
-import test_aide.class_helpers as ch
+import test_aide.classes as ch
 from unittest import mock
 
 
@@ -47,7 +47,7 @@ def test_hasattr_call():
     """Test the call to hasattr."""
 
     with mock.patch(
-        target="test_aide.class_helpers.hasattr", return_value=True
+        target="test_aide.classes.hasattr", return_value=True
     ) as mocked_method:
 
         ch.test_object_method(obj="s", expected_method="upper", msg="msg")
@@ -80,7 +80,7 @@ def test_hasattr_call():
 def test_callable_call():
     """Test the call to callable."""
 
-    with mock.patch(target="test_aide.class_helpers.callable") as mocked_method:
+    with mock.patch(target="test_aide.classes.callable") as mocked_method:
 
         ch.test_object_method(obj="s", expected_method="upper", msg="msg")
 

@@ -4,7 +4,7 @@ e.g. testing a particular function has been called in a particular way.
 """
 
 import inspect
-from test_aide.equality_helpers import (
+from test_aide.equality import (
     assert_equal_msg,
     assert_list_tuple_equal_msg,
     assert_dict_equal_msg,

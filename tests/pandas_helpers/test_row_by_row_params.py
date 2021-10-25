@@ -1,14 +1,14 @@
 import inspect
 import test_aide
-import test_aide.pandas_helpers as ph
-import test_aide.equality_helpers as eh
+import test_aide.pandas as ph
+import test_aide.equality as eh
 import pandas as pd
 from unittest import mock
 from _pytest.mark.structures import ParameterSet
 
 
 def test_arguments():
-    """Test arguments for arguments of test_aide.pandas_helpers.row_by_row_params."""
+    """Test arguments for arguments of test_aide.pandas.row_by_row_params."""
 
     expected_arguments = ["df_1", "df_2"]
 
@@ -37,7 +37,7 @@ def test__check_dfs_passed_call():
     df1 = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]}, index=[7, 8, 9])
     df2 = pd.DataFrame({"a": [2, 3, 4], "b": [5, 6, 7]}, index=[7, 8, 9])
 
-    with mock.patch.object(test_aide.pandas_helpers, "_check_dfs_passed") as mocked:
+    with mock.patch.object(test_aide.pandas, "_check_dfs_passed") as mocked:
 
         ph.row_by_row_params(df1, df2)
 

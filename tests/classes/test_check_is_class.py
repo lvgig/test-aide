@@ -1,6 +1,6 @@
 import pytest
-import test_aide.class_helpers as ch
-import test_aide.equality_helpers as eh
+import test_aide.classes as ch
+import test_aide.equality as eh
 from unittest import mock
 
 
