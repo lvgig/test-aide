@@ -4,8 +4,25 @@ where it is not possible to simply assert a == b (e.g. pandas.DataFrame) or
 nested data structures containing these types.
 """
 
-import pandas as pd
-import numpy as np
+try:
+
+    import pandas as pd
+
+except ModuleNotFoundError as err:
+
+    raise ImportError(
+        "pandas must be installed to use functionality in equality module"
+    ) from err
+
+try:
+
+    import numpy as np
+
+except ModuleNotFoundError as err:
+
+    raise ImportError(
+        "numpy must be installed to use functionality in equality module"
+    ) from err
 
 
 def assert_equal_dispatch(expected, actual, msg):

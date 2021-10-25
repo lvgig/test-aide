@@ -4,10 +4,27 @@ pandas.DataFrames to repeat tests that transform data more easily on susbsets of
 the passed data.
 """
 
-import pandas as pd
-import numpy as np
-
 import pytest
+
+try:
+
+    import pandas as pd
+
+except ModuleNotFoundError as err:
+
+    raise ImportError(
+        "pandas must be installed to use functionality in pandas module"
+    ) from err
+
+try:
+
+    import numpy as np
+
+except ModuleNotFoundError as err:
+
+    raise ImportError(
+        "numpy must be installed to use functionality in pandas module"
+    ) from err
 
 
 def _check_dfs_passed(df_1, df_2):
