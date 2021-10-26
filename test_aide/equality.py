@@ -8,21 +8,21 @@ try:
 
     import pandas as pd
 
-except ModuleNotFoundError as err:
+    has_pandas = True
 
-    raise ImportError(
-        "pandas must be installed to use functionality in equality module"
-    ) from err
+except ModuleNotFoundError:
+
+    has_pandas = False
 
 try:
 
     import numpy as np
 
-except ModuleNotFoundError as err:
+    has_numpy = True
 
-    raise ImportError(
-        "numpy must be installed to use functionality in equality module"
-    ) from err
+except ModuleNotFoundError:
+
+    has_numpy = False
 
 
 def assert_equal_dispatch(expected, actual, msg):
@@ -66,17 +66,29 @@ def assert_equal_dispatch(expected, actual, msg):
             f"expected ({type(expected)}) and actual ({type(actual)}) type mismatch"
         )
 
-    if type(expected) is pd.DataFrame:
+    if has_pandas and type(expected) is pd.DataFrame:
 
         assert_frame_equal_msg(actual, expected, msg)
 
-    elif type(expected) is pd.Series:
+    elif has_pandas and type(expected) is pd.Series:
 
         assert_series_equal_msg(actual, expected, msg)
 
-    elif isinstance(expected, pd.Index):
+    elif has_pandas and isinstance(expected, pd.Index):
 
         assert_index_equal_msg(actual, expected, msg)
+
+    elif (
+        has_numpy
+        and (type(expected) is float or isinstance(expected, np.float))
+        and np.isnan(expected)
+    ):
+
+        assert_np_nan_eqal_msg(actual, expected, msg)
+
+    elif has_numpy and type(expected) is np.ndarray:
+
+        assert_array_equal_msg(actual, expected, msg)
 
     elif type(expected) in [list, tuple]:
 
@@ -85,16 +97,6 @@ def assert_equal_dispatch(expected, actual, msg):
     elif isinstance(expected, dict):
 
         assert_dict_equal_msg(actual, expected, msg)
-
-    elif (type(expected) is float or isinstance(expected, np.float)) and np.isnan(
-        expected
-    ):
-
-        assert_np_nan_eqal_msg(actual, expected, msg)
-
-    elif type(expected) is np.ndarray:
-
-        assert_array_equal_msg(actual, expected, msg)
 
     else:
 
