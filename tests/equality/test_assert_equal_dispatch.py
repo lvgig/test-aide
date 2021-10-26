@@ -254,26 +254,6 @@ def test_np_array_correct_function_call(mocker, expected_value):
         ("test_aide.equality.assert_equal_msg", "a"),
         ("test_aide.equality.assert_equal_msg", False),
         ("test_aide.equality.assert_equal_msg", None),
-        pytest.param(
-            "test_aide.equality.assert_equal_msg",
-            np.float64(1),
-            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
-        ),
-        pytest.param(
-            "test_aide.equality.assert_equal_msg",
-            np.int64(1),
-            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
-        ),
-        pytest.param(
-            "test_aide.equality.assert_np_nan_eqal_msg",
-            np.NaN,
-            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
-        ),
-        pytest.param(
-            "test_aide.equality.assert_np_nan_eqal_msg",
-            np.float64(np.NaN),
-            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
-        ),
     ],
 )
 def test_non_dataframe_correct_function_call(
@@ -319,10 +299,74 @@ def test_non_dataframe_correct_function_call(
 
     for i, (e, a) in enumerate(zip(call_1_expected_pos_arg, call_1_pos_args)):
 
-        # logic to handle np.NaNs o/w they will not pass e == a
-        if (type(e) is float and np.isnan(e)) or (
-            isinstance(e, np.float) and np.isnan(e)
-        ):
+        assert (
+            e == a
+        ), f"Unexpected positional arg in index {i} in call to {test_function_call} -\n  Expected: {e}\n  Actual: {a}"
+
+    assert (
+        call_1_kwargs == {}
+    ), f"Unexpected keyword args in call to {test_function_call} -\n  Expected: None\n  Actual:  {call_1_kwargs}"
+
+    # get functions that should not have been called
+    test_functions_not_call = list(
+        set(potential_assert_functions) - set([test_function_call])
+    )
+
+    # loop through each one and test it has not been called
+    for test_function_not_call in test_functions_not_call:
+
+        getter, attribute = _get_target(test_function_not_call)
+
+        mocked_function_not_call = getattr(getter(), attribute)
+
+        assert (
+            mocked_function_not_call.call_count == 0
+        ), f"Unexpected number of calls to {test_function_not_call} -\n  Expected:  0\n  Actual:  {mocked_function_not_call.call_count}"
+
+
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
+def test_nan_correct_function_call(mocker):
+    """Test that the correct 'sub' assert function is called as expected if the input
+    type is np.NaN - and none of the other functions are called.
+    """
+
+    # function to check has been called
+    test_function_call = "test_aide.equality.assert_np_nan_eqal_msg"
+
+    # patch all the potential functions that can be called by test_aide.equality.assert_equal_dispatch
+    for x in potential_assert_functions:
+
+        mocker.patch(x)
+
+    expected_value = np.NaN
+    actual_value = expected_value
+    msg_value = "test_msg"
+
+    eh.assert_equal_dispatch(
+        expected=expected_value, actual=actual_value, msg=msg_value
+    )
+
+    getter, attribute = _get_target(test_function_call)
+
+    mocked_function_call = getattr(getter(), attribute)
+
+    assert (
+        mocked_function_call.call_count == 1
+    ), f"Unexpected number of calls to {test_function_call} with {expected_value} -\n  Expected:  1\n  Actual:  {mocked_function_call.call_count}"
+
+    call_1_args = mocked_function_call.call_args_list[0]
+    call_1_pos_args = call_1_args[0]
+    call_1_kwargs = call_1_args[1]
+
+    call_1_expected_pos_arg = (expected_value, actual_value, msg_value)
+
+    assert len(call_1_pos_args) == len(
+        call_1_expected_pos_arg
+    ), f"Unexpected number of positional args in call to {test_function_call} -\n  Expected: {len(call_1_expected_pos_arg)}\n  Actual:  {len(call_1_pos_args)}"
+
+    for i, (e, a) in enumerate(zip(call_1_expected_pos_arg, call_1_pos_args)):
+
+        if type(e) is float and np.isnan(e):
 
             assert np.isnan(e) and np.isnan(
                 a
