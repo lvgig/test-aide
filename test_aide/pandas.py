@@ -2,6 +2,10 @@
 This module contains helper functions that create pytest params subsets of input
 pandas.DataFrames to repeat tests that transform data more easily on susbsets of
 the passed data.
+
+Note, if either pandas or numpy libraries are not installed then this module will
+not be available when the package is loaded.
+
 """
 
 import pytest

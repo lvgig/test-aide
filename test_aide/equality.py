@@ -2,6 +2,11 @@
 This module contains helper functions that simplify asserting equality for types
 where it is not possible to simply assert a == b (e.g. pandas.DataFrame) or
 nested data structures containing these types.
+
+Note, if pandas or numpy is not available when the module is imported then the
+functionality of the assert_equal_dispatch will change - so as not to try and
+check types from the libraries that are not available.
+
 """
 
 try:
@@ -37,14 +42,24 @@ def assert_equal_dispatch(expected, actual, msg):
     - pd.DataFrame
     - pd.Series
     - pd.Index
-    - list
-    - tuple
-    - dict
     - np.float
     - np.NaN
     - np.ndarray
-    if on object is passed that is not one of the above types then the standard assert for
-    equality is used.
+
+    If the inputs are not of the above types then in the case of the following types;
+    - list
+    - tuple
+    - dict
+    recursive calls will be made on the elements of the object, again according to
+    their tpyes.
+
+    Finally if on object is passed that is not one of any of the above types then the
+    standard assert for equality is used.
+
+    Note, if pandas or numpy are not available then the types from those libraries
+    will not be considered i.e. if both are not installed then the function will only
+    use the standard equality assertion, while still recursively calling itself
+    if a list, tuple or dict is passed.
 
     Parameters
     ----------
