@@ -1,9 +1,18 @@
-import pandas as pd
-import pandas
 import inspect
 import pytest
 
 import test_aide.equality as eh
+
+try:
+
+    import pandas as pd
+    import pandas
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
 
 
 def test_arguments():
@@ -60,6 +69,7 @@ def test_arguments():
     ), f"Unexpected keyword arg variable in assert_series_equal_msg -\n  Expected: {expected_var_keyword_arg}\n  Actual: {var_keyword_arg}"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_pandas_assert_series_called(mocker):
     """Test the call to pandas.testing.assert_series_equal."""
 
@@ -97,6 +107,7 @@ def test_pandas_assert_series_called(mocker):
     pd.testing.assert_series_equal(call_1_expected_pos_args[1], call_1_pos_args[1])
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_exception_no_print():
     """Test an assert error is raised (with correct info) in case of exception coming from assert_series_equal and
     print_actual_and_expected is False.
@@ -111,6 +122,7 @@ def test_exception_no_print():
         )
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_exception_print():
     """Test an assert error is raised (with correct info) in case of exception coming from assert_series_equal and
     print_actual_and_expected is True.

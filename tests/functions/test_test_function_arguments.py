@@ -3,8 +3,17 @@ import pytest
 import test_aide.functions as fh
 import test_aide.classes as ch
 import test_aide.equality as eh
-import pandas as pd
 from unittest import mock
+
+try:
+
+    import pandas as pd
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
 
 
 def test_arguments():
@@ -218,6 +227,7 @@ def test_different_number_default_values_error():
         )
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_assert_equal_msg_calls_for_default_values():
     """Test the calls to assert_equal_msg for the keyword arguments."""
 
