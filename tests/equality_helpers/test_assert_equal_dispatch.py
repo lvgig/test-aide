@@ -1,7 +1,7 @@
 import inspect
 import pytest
 import test_aide.equality as eh
-from tubular.base import ReturnKeyDict
+from collections import defaultdict
 import pandas as pd
 import numpy as np
 from unittest.mock import _get_target
@@ -226,7 +226,7 @@ def test_np_array_correct_function_call(mocker, expected_value):
         ("test_aide.equality.assert_list_tuple_equal_msg", [1, 2]),
         ("test_aide.equality.assert_list_tuple_equal_msg", (1, 2)),
         ("test_aide.equality.assert_dict_equal_msg", {"a": 1}),
-        ("test_aide.equality.assert_dict_equal_msg", ReturnKeyDict({"a": 1})),
+        ("test_aide.equality.assert_dict_equal_msg", defaultdict(None, {"a": 1})),
         ("test_aide.equality.assert_equal_msg", 1),
         ("test_aide.equality.assert_equal_msg", 1.0),
         ("test_aide.equality.assert_equal_msg", "a"),
