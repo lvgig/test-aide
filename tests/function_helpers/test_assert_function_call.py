@@ -1,8 +1,21 @@
 import pytest
-import tubular
 import test_aide
 import test_aide.functions as fh
 import test_aide.test_data as d
+
+
+class DummyClass:
+    """Dummy class to be used in tests in this script, with it's methods being mocked."""
+
+    def dummy_function_a(self, *args, **kwargs):
+        """Function that only calls dummy_function_b."""
+
+        self.dummy_function_b(*args, **kwargs)
+
+    def dummy_function_b(self, *args, **kwargs):
+        """Function that does nothing, is called by dummy_function_a."""
+
+        pass
 
 
 def test_arguments():
@@ -25,13 +38,10 @@ def test_mocker_arg_not_mocker_fixture_error():
 
         df = d.create_df_1()
 
-        x = tubular.base.BaseTransformer(columns="a")
+        x = DummyClass()
 
         with fh.assert_function_call(
-            "aaaaaa",
-            tubular.base.BaseTransformer,
-            "columns_set_or_check",
-            {0: {"args": (), "kwargs": {}}},
+            "aaaaaa", DummyClass, "dummy_function_b", {0: {"args": (), "kwargs": {}}}
         ):
 
             x.fit(X=df)
@@ -42,22 +52,20 @@ def test_expected_calls_args_checks(mocker):
 
     with pytest.raises(TypeError, match="expected_calls_args should be a dict"):
 
-        with fh.assert_function_call(
-            mocker, tubular.base.BaseTransformer, "__init__", ()
-        ):
+        with fh.assert_function_call(mocker, DummyClass, "dummy_function_b", ()):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(TypeError, match="expected_calls_args keys should be integers"):
 
         with fh.assert_function_call(
             mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
+            DummyClass,
+            "dummy_function_b",
             {"a": {"args": (), "kwargs": {"columns": "a"}}},
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(
         ValueError,
@@ -66,25 +74,22 @@ def test_expected_calls_args_checks(mocker):
 
         with fh.assert_function_call(
             mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
+            DummyClass,
+            "dummy_function_b",
             {-1: {"args": (), "kwargs": {"columns": "a"}}},
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(
         TypeError, match="each value in expected_calls_args should be a dict"
     ):
 
         with fh.assert_function_call(
-            mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
-            {0: ((), {"columns": "a"})},
+            mocker, DummyClass, "dummy_function_b", {0: ((), {"columns": "a"})}
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(
         ValueError,
@@ -93,36 +98,33 @@ def test_expected_calls_args_checks(mocker):
 
         with fh.assert_function_call(
             mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
+            DummyClass,
+            "dummy_function_b",
             {0: {"argz": (), "kwargs": {"columns": "a"}}},
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(TypeError, match="args in expected_calls_args should be tuples"):
 
         with fh.assert_function_call(
             mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
+            DummyClass,
+            "dummy_function_b",
             {0: {"args": {}, "kwargs": {"columns": "a"}}},
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
     with pytest.raises(
         TypeError, match="kwargs in expected_calls_args should be dicts"
     ):
 
         with fh.assert_function_call(
-            mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
-            {0: {"args": (), "kwargs": ["a"]}},
+            mocker, DummyClass, "dummy_function_b", {0: {"args": (), "kwargs": ["a"]}}
         ):
 
-            tubular.base.BaseTransformer(columns="a")
+            DummyClass()
 
 
 def test_mocker_patch_object_call(mocker):
@@ -132,15 +134,17 @@ def test_mocker_patch_object_call(mocker):
 
     expected_call_arguments = {0: {"args": ("a",), "kwargs": {"other": 1}}}
 
+    x = DummyClass()
+
     with fh.assert_function_call(
         mocker,
-        tubular.base.BaseTransformer,
-        "__init__",
+        DummyClass,
+        "dummy_function_b",
         expected_call_arguments,
         return_value=None,
     ):
 
-        tubular.imputers.BaseImputer("a", other=1)
+        x.dummy_function_a("a", other=1)
 
     assert mocked.call_count == 1, "unexpected number of calls to mocker.patch.object"
 
@@ -149,8 +153,8 @@ def test_mocker_patch_object_call(mocker):
     call_kwargs = mocker_patch_object_call[1]
 
     assert call_pos_args == (
-        tubular.base.BaseTransformer,
-        "__init__",
+        DummyClass,
+        "dummy_function_b",
     ), "unexpected positional args in mocker.patch.object call"
 
     assert call_kwargs == {
@@ -167,18 +171,20 @@ def test_successful_function_call(mocker):
         3: {"args": (), "kwargs": {"columns": ["a", "b"]}},
     }
 
+    x = DummyClass()
+
     with fh.assert_function_call(
         mocker,
-        tubular.base.BaseTransformer,
-        "__init__",
+        DummyClass,
+        "dummy_function_b",
         expected_call_arguments,
         return_value=None,
     ):
 
-        tubular.imputers.BaseImputer("a", other=1)
-        tubular.imputers.ArbitraryImputer(1, columns=["a"])
-        tubular.imputers.BaseTransformer(["a", "b"])
-        tubular.imputers.BaseImputer(columns=["a", "b"])
+        x.dummy_function_a("a", other=1)
+        x.dummy_function_a(1, columns=["a"])
+        x.dummy_function_a(["a", "b"])
+        x.dummy_function_a(columns=["a", "b"])
 
 
 def test_not_enough_function_calls_exception(mocker):
@@ -189,23 +195,25 @@ def test_not_enough_function_calls_exception(mocker):
         5: {"args": (), "kwargs": {"columns": ["a", "b"]}},
     }
 
+    x = DummyClass()
+
     with pytest.raises(
         AssertionError,
-        match="not enough calls to __init__, expected at least 6 but got 4",
+        match="not enough calls to dummy_function_b, expected at least 6 but got 4",
     ):
 
         with fh.assert_function_call(
             mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
+            DummyClass,
+            "dummy_function_b",
             expected_call_arguments,
             return_value=None,
         ):
 
-            tubular.imputers.BaseImputer("a", other=1)
-            tubular.imputers.ArbitraryImputer(1, columns=["a"])
-            tubular.base.BaseTransformer(["a", "b"])
-            tubular.imputers.BaseImputer(columns=["a", "b"])
+            x.dummy_function_a("a", other=1)
+            x.dummy_function_a(1, columns=["a"])
+            x.dummy_function_a(["a", "b"])
+            x.dummy_function_a(columns=["a", "b"])
 
 
 @pytest.mark.parametrize(
@@ -234,20 +242,18 @@ def test_not_enough_function_calls_exception(mocker):
 def test_incorrect_call_args_exception(mocker, expected_args):
     """Test an exception is raised if the mocked function is not called with expected arguments."""
 
+    x = DummyClass()
+
     with pytest.raises(AssertionError):
 
         with fh.assert_function_call(
-            mocker,
-            tubular.base.BaseTransformer,
-            "__init__",
-            expected_args,
-            return_value=None,
+            mocker, DummyClass, "dummy_function_b", expected_args, return_value=None
         ):
 
-            tubular.base.BaseTransformer("a", other=1)
-            tubular.base.BaseTransformer()
-            tubular.base.BaseTransformer(["a", "b"])
-            tubular.base.BaseTransformer(columns=["a", "b"])
+            x.dummy_function_a("a", other=1)
+            x.dummy_function_a()
+            x.dummy_function_a(["a", "b"])
+            x.dummy_function_a(columns=["a", "b"])
 
 
 def test_assert_dict_equal_msg_call(mocker):
@@ -265,18 +271,16 @@ def test_assert_dict_equal_msg_call(mocker):
         3: {"args": (), "kwargs": {"columns": ["a", "c"]}},
     }
 
+    x = DummyClass()
+
     with fh.assert_function_call(
-        mocker,
-        tubular.base.BaseTransformer,
-        "__init__",
-        expected_args,
-        return_value=None,
+        mocker, DummyClass, "dummy_function_b", expected_args, return_value=None
     ):
 
-        tubular.base.BaseTransformer("a", other=1)
-        tubular.base.BaseTransformer()
-        tubular.base.BaseTransformer(["a", "b"])
-        tubular.base.BaseTransformer(columns=["a", "b"])
+        x.dummy_function_a("a", other=1)
+        x.dummy_function_a()
+        x.dummy_function_a(["a", "b"])
+        x.dummy_function_a(columns=["a", "b"])
 
     assert (
         mocked_dict_assert.call_count == 4
@@ -346,18 +350,16 @@ def test_assert_list_tuple_equal_msg_call(mocker):
         3: {"args": (), "kwargs": {"columns": "a"}},
     }
 
+    x = DummyClass()
+
     with fh.assert_function_call(
-        mocker,
-        tubular.base.BaseTransformer,
-        "__init__",
-        expected_args,
-        return_value=None,
+        mocker, DummyClass, "dummy_function_b", expected_args, return_value=None
     ):
 
-        tubular.base.BaseTransformer("a", other=1)
-        tubular.base.BaseTransformer()
-        tubular.base.BaseTransformer(["a", "b"])
-        tubular.base.BaseTransformer(columns="a")
+        x.dummy_function_a("a", other=1)
+        x.dummy_function_a()
+        x.dummy_function_a(["a", "b"])
+        x.dummy_function_a(columns="a")
 
     assert (
         mocked_dict_assert.call_count == 4
