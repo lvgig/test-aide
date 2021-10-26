@@ -1,7 +1,6 @@
 import pytest
 import test_aide
 import test_aide.functions as fh
-import test_aide.test_data as d
 
 
 class DummyClass:
@@ -36,15 +35,13 @@ def test_mocker_arg_not_mocker_fixture_error():
         TypeError, match="mocker should be the pytest_mock mocker fixture"
     ):
 
-        df = d.create_df_1()
-
         x = DummyClass()
 
         with fh.assert_function_call(
             "aaaaaa", DummyClass, "dummy_function_b", {0: {"args": (), "kwargs": {}}}
         ):
 
-            x.fit(X=df)
+            x.dummy_function_a()
 
 
 def test_expected_calls_args_checks(mocker):

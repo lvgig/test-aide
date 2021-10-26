@@ -1,6 +1,5 @@
 from ._version import __version__
 
-from . import test_data
 from . import classes
 from . import functions
 
