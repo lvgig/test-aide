@@ -115,15 +115,14 @@ def assert_function_call_count(mocker, target, attribute, expected_n_calls, **kw
 
     Examples
     --------
-    >>> import helpers as h
-    >>> import test_data as d
-    >>> import tubular
+    >>> import test_aide as ta
+    >>> import random
     >>>
     >>> def test_number_calls_to_function(mocker):
-    ...     df = d.create_df_1()
-    ...     x = tubular.base.BaseTransformer(columns="a")
-    ...     with h.assert_function_call_count(mocker, tubular.base.BaseTransformer, "columns_set_or_check", 1):
-    ...         x.fit(X=df)
+    ...     with ta.functions.assert_function_call_count(mocker, random, "choice", 3):
+    ...         random.choice([1, 2, 3])
+    ...         random.choice([4, 5, 6])
+    ...         random.choice([7, 8, 9])
 
     """
 
@@ -178,37 +177,38 @@ def assert_function_call(mocker, target, attribute, expected_calls_args, **kwarg
 
     Examples
     --------
-    >>> import helpers as h
-    >>> import tubular
+    >>> import test_aide as ta
+    >>> import random
     >>>
     >>> def test_number_calls_to_function(mocker):
     ...     expected_call_arguments = {
     ...         0: {
     ...             'args': (
-    ...                 'a',
+    ...                 [1, 2, 3],
     ...             ),
     ...             'kwargs': {
-    ...                 'other': 1
+    ...                 'weights': None
     ...             }
     ...         },
     ...         2: {
     ...             'args': (
-    ...                 ["a", "b"],
+    ...                 [1, 2, 3],
     ...             ),
     ...             'kwargs': {}
     ...         },
     ...         3: {
     ...             'args': (),
     ...             'kwargs': {
-    ...                 'columns': ["a", "b"]
+    ...                 'populaton': [1, 2, 3],
+    ...                 'k': 2
     ...              }
     ...         }
     ...     }
-    ...     with h.assert_function_call(mocker, tubular.base.BaseTransformer, "__init__", expected_call_arguments, return_value=None):
-    ...         x = tubular.base.BaseTransformer("a", other=1)
-    ...         x2 = tubular.base.BaseTransformer()
-    ...         x3 = tubular.base.BaseTransformer(["a", "b"])
-    ...         x4 = tubular.base.BaseTransformer(columns = ["a", "b"])
+    ...     with h.assert_function_call(mocker, random, "choices", expected_call_arguments, return_value=None):
+    ...         random.choices([1, 2, 3], weights=None)
+    ...         random.choices([1, 2, 3])
+    ...         random.choices([1, 2, 3])
+    ...         random.choices(population=[1, 2, 3], k=2)
     >>>
 
     """
