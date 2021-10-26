@@ -1,7 +1,19 @@
 import pytest
-import tubular
 import test_aide.functions as fh
-import test_aide.test_data as d
+
+
+class DummyClass:
+    """Dummy class to be used in tests in this script, with it's methods being mocked."""
+
+    def dummy_function_a(self, *args, **kwargs):
+        """Function that only calls dummy_function_b."""
+
+        self.dummy_function_b(*args, **kwargs)
+
+    def dummy_function_b(self, *args, **kwargs):
+        """Function that does nothing, is called by dummy_function_a."""
+
+        pass
 
 
 def test_arguments():
@@ -22,15 +34,11 @@ def test_mocker_arg_not_mocker_fixture_error():
         TypeError, match="mocker should be the pytest_mock mocker fixture"
     ):
 
-        df = d.create_df_1()
+        x = DummyClass()
 
-        x = tubular.base.BaseTransformer(columns="a")
+        with fh.assert_function_call_count("aaaaaa", DummyClass, "dummy_function_b", 1):
 
-        with fh.assert_function_call_count(
-            "aaaaaa", tubular.base.BaseTransformer, "columns_set_or_check", 1
-        ):
-
-            x.fit(X=df)
+            x.dummy_function_a()
 
 
 def test_mocker_patch_object_call(mocker):
@@ -38,11 +46,13 @@ def test_mocker_patch_object_call(mocker):
 
     mocked = mocker.spy(mocker.patch, "object")
 
+    x = DummyClass()
+
     with fh.assert_function_call_count(
-        mocker, tubular.base.BaseTransformer, "__init__", 1, return_value=None
+        mocker, DummyClass, "dummy_function_b", 1, return_value=None
     ):
 
-        tubular.imputers.BaseImputer("a", other=1)
+        x.dummy_function_a()
 
     assert mocked.call_count == 1, "unexpected number of calls to mocker.patch.object"
 
@@ -51,8 +61,8 @@ def test_mocker_patch_object_call(mocker):
     call_kwargs = mocker_patch_object_call[1]
 
     assert call_pos_args == (
-        tubular.base.BaseTransformer,
-        "__init__",
+        DummyClass,
+        "dummy_function_b",
     ), "unexpected positional args in mocker.patch.object call"
 
     assert call_kwargs == {
@@ -63,15 +73,11 @@ def test_mocker_patch_object_call(mocker):
 def test_successful_usage(mocker):
     """Test an example of successful run of fh.assert_function_call_count."""
 
-    df = d.create_df_1()
+    x = DummyClass()
 
-    x = tubular.base.BaseTransformer(columns="a")
+    with fh.assert_function_call_count(mocker, DummyClass, "dummy_function_b", 1):
 
-    with fh.assert_function_call_count(
-        mocker, tubular.base.BaseTransformer, "columns_set_or_check", 1
-    ):
-
-        x.fit(X=df)
+        x.dummy_function_a()
 
 
 def test_exception_raised_more_calls_expected(mocker):
@@ -79,18 +85,14 @@ def test_exception_raised_more_calls_expected(mocker):
 
     with pytest.raises(
         AssertionError,
-        match="incorrect number of calls to columns_set_or_check, expected 2 but got 1",
+        match="incorrect number of calls to dummy_function_b, expected 2 but got 1",
     ):
 
-        df = d.create_df_1()
+        x = DummyClass()
 
-        x = tubular.base.BaseTransformer(columns="a")
+        with fh.assert_function_call_count(mocker, DummyClass, "dummy_function_b", 2):
 
-        with fh.assert_function_call_count(
-            mocker, tubular.base.BaseTransformer, "columns_set_or_check", 2
-        ):
-
-            x.fit(X=df)
+            x.dummy_function_a()
 
 
 def test_exception_raised_more_calls_expected2(mocker):
@@ -98,18 +100,12 @@ def test_exception_raised_more_calls_expected2(mocker):
 
     with pytest.raises(
         AssertionError,
-        match="incorrect number of calls to __init__, expected 4 but got 0",
+        match="incorrect number of calls to dummy_function_b, expected 4 but got 0",
     ):
 
-        df = d.create_df_1()
+        with fh.assert_function_call_count(mocker, DummyClass, "dummy_function_b", 4):
 
-        x = tubular.base.BaseTransformer(columns="a")
-
-        with fh.assert_function_call_count(
-            mocker, tubular.base.BaseTransformer, "__init__", 4
-        ):
-
-            x.fit(X=df)
+            DummyClass()
 
 
 def test_exception_raised_less_calls_expected(mocker):
@@ -117,19 +113,15 @@ def test_exception_raised_less_calls_expected(mocker):
 
     with pytest.raises(
         AssertionError,
-        match="incorrect number of calls to columns_set_or_check, expected 1 but got 2",
+        match="incorrect number of calls to dummy_function_b, expected 1 but got 2",
     ):
 
-        df = d.create_df_1()
+        x = DummyClass()
 
-        x = tubular.base.BaseTransformer(columns="a")
+        with fh.assert_function_call_count(mocker, DummyClass, "dummy_function_b", 1):
 
-        with fh.assert_function_call_count(
-            mocker, tubular.base.BaseTransformer, "columns_set_or_check", 1
-        ):
-
-            x.fit(X=df)
-            x.fit(X=df)
+            x.dummy_function_a()
+            x.dummy_function_a()
 
 
 def test_exception_raised_less_calls_expected2(mocker):
@@ -137,15 +129,11 @@ def test_exception_raised_less_calls_expected2(mocker):
 
     with pytest.raises(
         AssertionError,
-        match="incorrect number of calls to columns_set_or_check, expected 0 but got 1",
+        match="incorrect number of calls to dummy_function_b, expected 0 but got 1",
     ):
 
-        df = d.create_df_1()
+        x = DummyClass()
 
-        x = tubular.base.BaseTransformer(columns="a")
+        with fh.assert_function_call_count(mocker, DummyClass, "dummy_function_b", 0):
 
-        with fh.assert_function_call_count(
-            mocker, tubular.base.BaseTransformer, "columns_set_or_check", 0
-        ):
-
-            x.fit(X=df)
+            x.dummy_function_a()
