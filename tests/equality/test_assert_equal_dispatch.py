@@ -2,9 +2,27 @@ import inspect
 import pytest
 import test_aide.equality as eh
 from collections import defaultdict
-import pandas as pd
-import numpy as np
 from unittest.mock import _get_target
+
+try:
+
+    import pandas as pd
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
+
+try:
+
+    import numpy as np
+
+    has_numpy = True
+
+except ModuleNotFoundError:
+
+    has_numpy = False
 
 
 # potential functions that test_aide.equality.assert_equal_dispatch can call
@@ -52,23 +70,25 @@ def test_different_types_error():
         eh.assert_equal_dispatch(expected=1, actual=1.0, msg="test_msg")
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 @pytest.mark.parametrize(
     "test_function_call, expected_value, pd_testing_function",
     [
+        # the None if not has_pandas below is to stop pd being accessed before the test is skipped
         (
             "test_aide.equality.assert_frame_equal_msg",
-            pd.DataFrame({"a": [1, 2]}),
-            pd.testing.assert_frame_equal,
+            None if not has_pandas else pd.DataFrame({"a": [1, 2]}),
+            None if not has_pandas else pd.testing.assert_frame_equal,
         ),
         (
             "test_aide.equality.assert_series_equal_msg",
-            pd.Series([1, 2]),
-            pd.testing.assert_series_equal,
+            None if not has_pandas else pd.Series([1, 2]),
+            None if not has_pandas else pd.testing.assert_series_equal,
         ),
         (
             "test_aide.equality.assert_index_equal_msg",
-            pd.Index([1, 2]),
-            pd.testing.assert_index_equal,
+            None if not has_pandas else pd.Index([1, 2]),
+            None if not has_pandas else pd.testing.assert_index_equal,
         ),
     ],
 )
@@ -144,13 +164,15 @@ def test_pd_types_correct_function_call(
         ), f"Unexpected number of calls to {test_function_not_call} -\n  Expected:  0\n  Actual:  {mocked_function_not_call.call_count}"
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 @pytest.mark.parametrize(
     "expected_value",
+    # the None if not has_numpy below is to stop np being accessed before the test is skipped
     [
-        np.array([]),
-        np.array([0, 1, 2]),
-        np.array([[1, 2], [3, 4]]),
-        np.array([np.nan, np.nan]),
+        None if not has_numpy else np.array([]),
+        None if not has_numpy else np.array([0, 1, 2]),
+        None if not has_numpy else np.array([[1, 2], [3, 4]]),
+        None if not has_numpy else np.array([np.nan, np.nan]),
     ],
 )
 def test_np_array_correct_function_call(mocker, expected_value):
@@ -232,10 +254,26 @@ def test_np_array_correct_function_call(mocker, expected_value):
         ("test_aide.equality.assert_equal_msg", "a"),
         ("test_aide.equality.assert_equal_msg", False),
         ("test_aide.equality.assert_equal_msg", None),
-        ("test_aide.equality.assert_equal_msg", np.float64(1)),
-        ("test_aide.equality.assert_equal_msg", np.int64(1)),
-        ("test_aide.equality.assert_np_nan_eqal_msg", np.NaN),
-        ("test_aide.equality.assert_np_nan_eqal_msg", np.float64(np.NaN)),
+        pytest.param(
+            "test_aide.equality.assert_equal_msg",
+            np.float64(1),
+            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
+        ),
+        pytest.param(
+            "test_aide.equality.assert_equal_msg",
+            np.int64(1),
+            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
+        ),
+        pytest.param(
+            "test_aide.equality.assert_np_nan_eqal_msg",
+            np.NaN,
+            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
+        ),
+        pytest.param(
+            "test_aide.equality.assert_np_nan_eqal_msg",
+            np.float64(np.NaN),
+            marks=pytest.mark.skipif(not has_numpy, reason="numpy not installed"),
+        ),
     ],
 )
 def test_non_dataframe_correct_function_call(
