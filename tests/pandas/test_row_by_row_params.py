@@ -1,10 +1,20 @@
 import inspect
+import pytest
 import test_aide
-import test_aide.pandas as ph
 import test_aide.equality as eh
-import pandas as pd
 from unittest import mock
 from _pytest.mark.structures import ParameterSet
+
+try:
+
+    import pandas as pd
+    import test_aide.pandas as ph
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
 
 
 def test_arguments():
@@ -31,6 +41,7 @@ def test_arguments():
     ), f"Unexpected default values -\n  Expected: {None}\n  Actual: {default_values}"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test__check_dfs_passed_call():
     """Test the call to _check_dfs_passed."""
 

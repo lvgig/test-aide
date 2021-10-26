@@ -1,11 +1,21 @@
 import inspect
+import pytest
 import test_aide
-import test_aide.pandas as ph
 import test_aide.equality as eh
-import pandas as pd
-import numpy as np
 from unittest import mock
 from _pytest.mark.structures import ParameterSet
+
+try:
+
+    import pandas as pd
+    import numpy as np
+    import test_aide.pandas as ph
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
 
 
 def test_arguments():
@@ -32,6 +42,7 @@ def test_arguments():
     ), f"Unexpected default values -\n  Expected: {(0, )}\n  Actual: {default_values}"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test__index_preserved_params_call():
     """Test the call to _check_dfs_passed."""
 
@@ -58,6 +69,7 @@ def test__index_preserved_params_call():
     ), "unexpected positional args in index_preserved_params call"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test__row_by_row_params_call():
     """Test the call to _check_dfs_passed."""
 
@@ -80,6 +92,7 @@ def test__row_by_row_params_call():
     ), "unexpected positional args in row_by_row_params call"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_returned_object():
     """Test the function returns the expected output."""
 
