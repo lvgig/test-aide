@@ -13,6 +13,7 @@ except ModuleNotFoundError:
     has_pandas = False
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_arguments():
     """Test arguments for arguments of test_aide.pandas._check_dfs_passed."""
 

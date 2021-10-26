@@ -17,6 +17,7 @@ except ModuleNotFoundError:
     has_pandas = False
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_arguments():
     """Test arguments for arguments of test_aide.pandas.row_by_row_params."""
 
@@ -64,6 +65,7 @@ def test__check_dfs_passed_call():
     ), "unexpected positional args in _check_dfs_passed call"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_returned_object():
     """Test the function returns the expected output."""
 

@@ -18,6 +18,7 @@ except ModuleNotFoundError:
     has_pandas = False
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test_arguments():
     """Test arguments for arguments of test_aide.pandas.index_preserved_params."""
 
@@ -42,6 +43,7 @@ def test_arguments():
     ), f"Unexpected default values -\n  Expected: {(0, )}\n  Actual: {default_values}"
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 def test__check_dfs_passed_call():
     """Test the call to _check_dfs_passed."""
 
