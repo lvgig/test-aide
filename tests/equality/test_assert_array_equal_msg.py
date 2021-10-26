@@ -1,9 +1,18 @@
-import numpy
-import numpy as np
 import inspect
 import pytest
 
 import test_aide.equality as eh
+
+try:
+
+    import numpy as np
+    import numpy
+
+    has_numpy = True
+
+except ModuleNotFoundError:
+
+    has_numpy = False
 
 
 def test_arguments():
@@ -60,6 +69,7 @@ def test_arguments():
     ), f"Unexpected keyword arg variable in assert_array_equal_msg -\n  Expected: {expected_var_keyword_arg}\n  Actual: {var_keyword_arg}"
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 def test_expected_not_array_error():
     """'Test that a TypeError is raised if expected is not a numpy array."""
 
@@ -70,6 +80,7 @@ def test_expected_not_array_error():
         eh.assert_array_equal_msg(expected=1, actual=np.array([]), msg_tag="test_msg")
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 def test_actual_not_array_error():
     """'Test that a TypeError is raised if actual is not a numpy array."""
 
@@ -80,6 +91,7 @@ def test_actual_not_array_error():
         eh.assert_array_equal_msg(expected=np.array([]), actual=1, msg_tag="test_msg")
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 def test_numpy_assert_array_called(mocker):
     """Test the call to pandas.testing.assert_series_equal."""
 
@@ -117,6 +129,7 @@ def test_numpy_assert_array_called(mocker):
     np.testing.assert_array_equal(call_1_expected_pos_args[1], call_1_pos_args[1])
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 def test_exception_no_print():
     """Test an assert error is raised (with correct info) in case of exception coming from assert_array_equal and
     print_actual_and_expected is False.
@@ -131,6 +144,7 @@ def test_exception_no_print():
         )
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 def test_exception_print():
     """Test an assert error is raised (with correct info) in case of exception coming from assert_series_equal and
     print_actual_and_expected is True.
