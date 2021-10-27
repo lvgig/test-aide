@@ -61,8 +61,8 @@ jobs:
     - name: Remove pandas and numpy
       if: always()
       run: |
-        pip uninstall pandas
-        pip uninstall numpy
+        pip uninstall pandas -y
+        pip uninstall numpy -y
 
     - name: Test with pytest without pandas or numpy
       if: always()
