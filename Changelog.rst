@@ -16,10 +16,11 @@ Subsections for each version can be one of the following;
 
 Each individual change should have a link to the pull request after the description of the change.
 
-0.1.0 (2021-10-26)
+0.1.0 (2021-10-27)
 ------------------
 
 Added
 ^^^^^
 
 - Initial version of the code for open source release after separating from `tubular <https://github.com/lvgig/tubular>`_
+- Set up documentation for  `readthedocs <https://test-aide.readthedocs.io/en/latest/index.html>`_

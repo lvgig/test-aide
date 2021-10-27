@@ -34,18 +34,6 @@ jobs:
         black --version
         black --check .
 
-    - name: Test with pytest
-      if: always()
-      run: |
-        pytest . --cov=test_aide/ --cov-report=html --cov-config=.coveragerc
-
-    - name: Upload coverage pytest html test results to github
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-html-pytest-results
-        path: htmlcov
-
     - name: Run Bandit tests
       if: always()
       run: |
@@ -58,5 +46,24 @@ jobs:
         name: bandit-results
         path: bandit-test-results.html
 
+    - name: Test with pytest
+      if: always()
+      run: |
+        pytest . --cov=test_aide/ --cov-report=html --cov-config=.coveragerc
 
+    - name: Upload coverage pytest html test results to github
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-html-pytest-results
+        path: htmlcov
 
+    - name: Remove pandas and numpy
+      run: |
+        pip uninstall pandas
+        pip uninstall numpy
+
+    - name: Test with pytest without pandas or numpy
+      if: always()
+      run: |
+        pytest .

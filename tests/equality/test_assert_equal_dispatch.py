@@ -2,9 +2,27 @@ import inspect
 import pytest
 import test_aide.equality as eh
 from collections import defaultdict
-import pandas as pd
-import numpy as np
 from unittest.mock import _get_target
+
+try:
+
+    import pandas as pd
+
+    has_pandas = True
+
+except ModuleNotFoundError:
+
+    has_pandas = False
+
+try:
+
+    import numpy as np
+
+    has_numpy = True
+
+except ModuleNotFoundError:
+
+    has_numpy = False
 
 
 # potential functions that test_aide.equality.assert_equal_dispatch can call
@@ -52,23 +70,25 @@ def test_different_types_error():
         eh.assert_equal_dispatch(expected=1, actual=1.0, msg="test_msg")
 
 
+@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
 @pytest.mark.parametrize(
     "test_function_call, expected_value, pd_testing_function",
     [
+        # the None if not has_pandas below is to stop pd being accessed before the test is skipped
         (
             "test_aide.equality.assert_frame_equal_msg",
-            pd.DataFrame({"a": [1, 2]}),
-            pd.testing.assert_frame_equal,
+            None if not has_pandas else pd.DataFrame({"a": [1, 2]}),
+            None if not has_pandas else pd.testing.assert_frame_equal,
         ),
         (
             "test_aide.equality.assert_series_equal_msg",
-            pd.Series([1, 2]),
-            pd.testing.assert_series_equal,
+            None if not has_pandas else pd.Series([1, 2]),
+            None if not has_pandas else pd.testing.assert_series_equal,
         ),
         (
             "test_aide.equality.assert_index_equal_msg",
-            pd.Index([1, 2]),
-            pd.testing.assert_index_equal,
+            None if not has_pandas else pd.Index([1, 2]),
+            None if not has_pandas else pd.testing.assert_index_equal,
         ),
     ],
 )
@@ -144,13 +164,15 @@ def test_pd_types_correct_function_call(
         ), f"Unexpected number of calls to {test_function_not_call} -\n  Expected:  0\n  Actual:  {mocked_function_not_call.call_count}"
 
 
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
 @pytest.mark.parametrize(
     "expected_value",
+    # the None if not has_numpy below is to stop np being accessed before the test is skipped
     [
-        np.array([]),
-        np.array([0, 1, 2]),
-        np.array([[1, 2], [3, 4]]),
-        np.array([np.nan, np.nan]),
+        None if not has_numpy else np.array([]),
+        None if not has_numpy else np.array([0, 1, 2]),
+        None if not has_numpy else np.array([[1, 2], [3, 4]]),
+        None if not has_numpy else np.array([np.nan, np.nan]),
     ],
 )
 def test_np_array_correct_function_call(mocker, expected_value):
@@ -232,10 +254,6 @@ def test_np_array_correct_function_call(mocker, expected_value):
         ("test_aide.equality.assert_equal_msg", "a"),
         ("test_aide.equality.assert_equal_msg", False),
         ("test_aide.equality.assert_equal_msg", None),
-        ("test_aide.equality.assert_equal_msg", np.float64(1)),
-        ("test_aide.equality.assert_equal_msg", np.int64(1)),
-        ("test_aide.equality.assert_np_nan_eqal_msg", np.NaN),
-        ("test_aide.equality.assert_np_nan_eqal_msg", np.float64(np.NaN)),
     ],
 )
 def test_non_dataframe_correct_function_call(
@@ -281,10 +299,74 @@ def test_non_dataframe_correct_function_call(
 
     for i, (e, a) in enumerate(zip(call_1_expected_pos_arg, call_1_pos_args)):
 
-        # logic to handle np.NaNs o/w they will not pass e == a
-        if (type(e) is float and np.isnan(e)) or (
-            isinstance(e, np.float) and np.isnan(e)
-        ):
+        assert (
+            e == a
+        ), f"Unexpected positional arg in index {i} in call to {test_function_call} -\n  Expected: {e}\n  Actual: {a}"
+
+    assert (
+        call_1_kwargs == {}
+    ), f"Unexpected keyword args in call to {test_function_call} -\n  Expected: None\n  Actual:  {call_1_kwargs}"
+
+    # get functions that should not have been called
+    test_functions_not_call = list(
+        set(potential_assert_functions) - set([test_function_call])
+    )
+
+    # loop through each one and test it has not been called
+    for test_function_not_call in test_functions_not_call:
+
+        getter, attribute = _get_target(test_function_not_call)
+
+        mocked_function_not_call = getattr(getter(), attribute)
+
+        assert (
+            mocked_function_not_call.call_count == 0
+        ), f"Unexpected number of calls to {test_function_not_call} -\n  Expected:  0\n  Actual:  {mocked_function_not_call.call_count}"
+
+
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
+def test_nan_correct_function_call(mocker):
+    """Test that the correct 'sub' assert function is called as expected if the input
+    type is np.NaN - and none of the other functions are called.
+    """
+
+    # function to check has been called
+    test_function_call = "test_aide.equality.assert_np_nan_eqal_msg"
+
+    # patch all the potential functions that can be called by test_aide.equality.assert_equal_dispatch
+    for x in potential_assert_functions:
+
+        mocker.patch(x)
+
+    expected_value = np.NaN
+    actual_value = expected_value
+    msg_value = "test_msg"
+
+    eh.assert_equal_dispatch(
+        expected=expected_value, actual=actual_value, msg=msg_value
+    )
+
+    getter, attribute = _get_target(test_function_call)
+
+    mocked_function_call = getattr(getter(), attribute)
+
+    assert (
+        mocked_function_call.call_count == 1
+    ), f"Unexpected number of calls to {test_function_call} with {expected_value} -\n  Expected:  1\n  Actual:  {mocked_function_call.call_count}"
+
+    call_1_args = mocked_function_call.call_args_list[0]
+    call_1_pos_args = call_1_args[0]
+    call_1_kwargs = call_1_args[1]
+
+    call_1_expected_pos_arg = (expected_value, actual_value, msg_value)
+
+    assert len(call_1_pos_args) == len(
+        call_1_expected_pos_arg
+    ), f"Unexpected number of positional args in call to {test_function_call} -\n  Expected: {len(call_1_expected_pos_arg)}\n  Actual:  {len(call_1_pos_args)}"
+
+    for i, (e, a) in enumerate(zip(call_1_expected_pos_arg, call_1_pos_args)):
+
+        if type(e) is float and np.isnan(e):
 
             assert np.isnan(e) and np.isnan(
                 a

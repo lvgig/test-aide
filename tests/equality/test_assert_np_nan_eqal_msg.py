@@ -2,7 +2,15 @@ import pytest
 import inspect
 import test_aide.equality as eh
 
-import numpy as np
+try:
+
+    import numpy as np
+
+    has_numpy = True
+
+except ModuleNotFoundError:
+
+    has_numpy = False
 
 
 def test_arguments():
@@ -29,7 +37,17 @@ def test_arguments():
     ), f"Unexpected default values -\n  Expected: None\n  Actual: {default_values}"
 
 
-@pytest.mark.parametrize("expected, actual", [(1, np.NaN), (np.NaN, 1), (1, 1)])
+@pytest.mark.skipif(not has_numpy, reason="numpy not installed")
+@pytest.mark.parametrize(
+    "expected, actual",
+    [
+        # the None if not has_numpy below is to stop np being accessed before the test is skipped
+        # from the mark decorator above
+        (1, None if not has_numpy else np.NaN),
+        (None if not has_numpy else np.NaN, 1),
+        (1, 1),
+    ],
+)
 def test_error_raised_unequal(expected, actual):
     """Test an assertion error is raised if both values are not None."""
 
