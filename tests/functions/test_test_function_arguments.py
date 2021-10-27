@@ -5,16 +5,6 @@ import test_aide.classes as ch
 import test_aide.equality as eh
 from unittest import mock
 
-try:
-
-    import pandas as pd
-
-    has_pandas = True
-
-except ModuleNotFoundError:
-
-    has_pandas = False
-
 
 def test_arguments():
     """Test arguments for arguments of test_aide.functions.test_function_arguments."""
@@ -227,17 +217,21 @@ def test_different_number_default_values_error():
         )
 
 
-@pytest.mark.skipif(not has_pandas, reason="pandas not installed")
+def dummy_function(name=None, age=None, location=None, employed=True):
+    """Dummy function to be used in the test below"""
+    print(name, age, location, employed)
+
+
 def test_assert_equal_msg_calls_for_default_values():
     """Test the calls to assert_equal_msg for the keyword arguments."""
 
     with mock.patch(target="test_aide.functions.assert_equal_msg") as mocked_method:
 
-        expected_args = ["self", "data", "index", "columns", "dtype", "copy"]
-        expected_default_values = (None, None, None, None, False)
+        expected_args = ["name", "age", "location", "employed"]
+        expected_default_values = (None, None, None, True)
 
         fh.test_function_arguments(
-            pd.DataFrame,
+            dummy_function,
             expected_arguments=expected_args,
             expected_default_values=expected_default_values,
         )
