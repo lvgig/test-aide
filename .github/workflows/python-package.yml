@@ -59,6 +59,7 @@ jobs:
         path: htmlcov
 
     - name: Remove pandas and numpy
+      if: always()
       run: |
         pip uninstall pandas
         pip uninstall numpy
