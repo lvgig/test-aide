@@ -42,7 +42,6 @@ def assert_equal_dispatch(expected, actual, msg):
     - pd.DataFrame
     - pd.Series
     - pd.Index
-    - np.float
     - np.NaN
     - np.ndarray
 
@@ -93,11 +92,7 @@ def assert_equal_dispatch(expected, actual, msg):
 
         assert_index_equal_msg(actual, expected, msg)
 
-    elif (
-        has_numpy
-        and (type(expected) is float or isinstance(expected, np.float))
-        and np.isnan(expected)
-    ):
+    elif has_numpy and isinstance(expected, float) and np.isnan(expected):
 
         assert_np_nan_eqal_msg(actual, expected, msg)
 
