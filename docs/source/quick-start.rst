@@ -40,7 +40,6 @@ The following ``pandas`` or ``numpy`` data types are supported for easier compar
 - pd.DataFrame
 - pd.Series
 - pd.Index
-- np.float
 - np.NaN
 - np.ndarray
 
