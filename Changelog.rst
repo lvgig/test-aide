@@ -16,6 +16,14 @@ Subsections for each version can be one of the following;
 
 Each individual change should have a link to the pull request after the description of the change.
 
+0.1.1 (2021-11-08)
+------------------
+
+Removed
+^^^^^^^
+
+- Remove ``np.float`` from ``equality`` module after it has been deprecated in `numpy 1.20 <https://numpy.org/doc/stable/release/1.20.0-notes.html#deprecations>`_ `#8 <https://github.com/lvgig/test-aide/pull/8>`_
+
 0.1.0 (2021-10-27)
 ------------------
 
